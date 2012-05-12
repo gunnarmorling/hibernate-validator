@@ -30,7 +30,7 @@ import javax.validation.Payload;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Email {
 
-	String message() default "No valid e-mail";
+	String message() default "{org.hibernate.validator.osgitest.constraint.Email.message}";
 
 	Class<?>[] groups() default { };
 

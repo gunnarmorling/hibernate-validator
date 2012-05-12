@@ -16,10 +16,12 @@
 */
 package org.hibernate.validator.osgitest;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
 
@@ -32,8 +34,12 @@ import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
+import org.hibernate.validator.HibernateValidatorConfiguration;
+import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.hibernate.validator.osgitest.constraint.Email;
 import org.hibernate.validator.osgitest.module1.CustomConstraint;
+import org.hibernate.validator.resourceloading.AggregateResourceBundleLocator;
+import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -53,6 +59,9 @@ public class OsgiIntegrationTest {
 
 	@Inject
 	private ValidatorFactory validatorFactory;
+
+	@Inject
+	private HibernateValidatorConfiguration configuration;
 
 	@Configuration
 	public Option[] config() {
@@ -93,16 +102,28 @@ public class OsgiIntegrationTest {
 		Set<ConstraintViolation<Bar>> constraintViolations = validatorFactory.getValidator().validate( new Bar() );
 
 		assertEquals( 1, constraintViolations.size() );
-		assertEquals( "No valid e-mail", constraintViolations.iterator().next().getMessage() );
+		assertEquals( "Not a valid e-mail", constraintViolations.iterator().next().getMessage() );
 	}
 
 	@Test
 	public void shouldValidateCustomConstraintFromOtherOsgiBundle() {
 
-		Set<ConstraintViolation<Baz>> constraintViolations = validatorFactory.getValidator().validate( new Baz() );
+		configuration.messageInterpolator(
+				new ResourceBundleMessageInterpolator(
+						(ResourceBundleLocator) new AggregateResourceBundleLocator(
+								Arrays.asList(
+										"ValidationMessages",
+										"Module1ValidationMessages"
+								)
+						)
+				)
+		);
+
+		Validator validator = configuration.buildValidatorFactory().getValidator();
+		Set<ConstraintViolation<Baz>> constraintViolations = validator.validate( new Baz() );
 
 		assertEquals( 1, constraintViolations.size() );
-		assertEquals( "Not valid", constraintViolations.iterator().next().getMessage() );
+		assertEquals( "Custom constraint not valid", constraintViolations.iterator().next().getMessage() );
 	}
 
 	private static class Foo {

@@ -20,20 +20,39 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>hibernate-validator-parent</artifactId>
+        <artifactId>hibernate-validator-osgi-integrationtest</artifactId>
         <groupId>org.hibernate</groupId>
         <version>5.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>hibernate-validator-osgi-integrationtest</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>hibernate-validator-osgi-integrationtest-module-1</artifactId>
+    <packaging>bundle</packaging>
 
-    <name>Hibernate Validator OSGi Integration Tests</name>
+    <name>Hibernate Validator OSGi Integration Tests (module 1)</name>
     <description>Hibernate Validator integration tests based on OSGi.</description>
 
-    <modules>
-        <module>module-1</module>
-        <module>module-2</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            org.hibernate.validator.osgitest.module1;version="${project.version}"
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

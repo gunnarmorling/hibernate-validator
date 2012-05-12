@@ -32,6 +32,9 @@ import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
+import org.hibernate.validator.osgitest.constraint.Email;
+import org.hibernate.validator.osgitest.module1.CustomConstraint;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.ops4j.pax.exam.CoreOptions.felix;
@@ -55,9 +58,10 @@ public class OsgiIntegrationTest {
 	public Option[] config() {
 
 		return options(
-				mavenBundle( "org.hibernate", "hibernate-validator", "4.3.0-SNAPSHOT" ),
+				mavenBundle( "org.hibernate", "hibernate-validator", "5.0.0-SNAPSHOT" ),
 				mavenBundle( "org.jboss.logging", "jboss-logging", "3.1.0.GA" ),
-				mavenBundle( "javax.validation", "validation-api", "1.0.1-SNAPSHOT" ),
+				mavenBundle( "javax.validation", "validation-api-osgi", "1.1.0-SNAPSHOT" ),
+				mavenBundle( "org.hibernate", "hibernate-validator-osgi-integrationtest-module-1", "5.0.0-SNAPSHOT" ),
 				junitBundles(),
 				felix().version( "3.2.2" )
 		);
@@ -83,10 +87,42 @@ public class OsgiIntegrationTest {
 		assertEquals( "must be greater than or equal to 1", constraintViolations.iterator().next().getMessage() );
 	}
 
+	@Test
+	public void shouldValidateCustomConstraint() {
+
+		Set<ConstraintViolation<Bar>> constraintViolations = validatorFactory.getValidator().validate( new Bar() );
+
+		assertEquals( 1, constraintViolations.size() );
+		assertEquals( "No valid e-mail", constraintViolations.iterator().next().getMessage() );
+	}
+
+	@Test
+	public void shouldValidateCustomConstraintFromOtherOsgiBundle() {
+
+		Set<ConstraintViolation<Baz>> constraintViolations = validatorFactory.getValidator().validate( new Baz() );
+
+		assertEquals( 1, constraintViolations.size() );
+		assertEquals( "Not valid", constraintViolations.iterator().next().getMessage() );
+	}
+
 	private static class Foo {
 
 		@SuppressWarnings("unused")
 		@Min(1)
-		private int bar = 0;
+		private int foo = 0;
+	}
+
+	private static class Bar {
+
+		@SuppressWarnings("unused")
+		@Email
+		private String bar = "";
+	}
+
+	private static class Baz {
+
+		@SuppressWarnings("unused")
+		@CustomConstraint
+		private String bar = "";
 	}
 }

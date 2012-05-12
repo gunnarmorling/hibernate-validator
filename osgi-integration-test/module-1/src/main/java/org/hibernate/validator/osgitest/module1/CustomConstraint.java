@@ -32,7 +32,7 @@ import org.hibernate.validator.osgitest.module1.internal.CustomConstraintValidat
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CustomConstraint {
 
-	String message() default "Not valid";
+	String message() default "{org.hibernate.validator.osgitest.module1.CustomConstraint.message}";
 
 	Class<?>[] groups() default { };
 

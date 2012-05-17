@@ -16,7 +16,6 @@
 */
 package org.hibernate.validator.osgitest;
 
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
 import javax.inject.Inject;
@@ -25,8 +24,10 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
 
+import com.foo.module1.constraint.CustomConstraint;
+import com.foo.module2.constraint.Email;
+import com.foo.module2.model.MyBean;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -35,21 +36,13 @@ import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
-import org.hibernate.validator.HibernateValidatorConfiguration;
-import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
-import org.hibernate.validator.resourceloading.AggregateResourceBundleLocator;
-import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
-
-import com.foo.module1.constraint.CustomConstraint;
-import com.foo.module2.constraint.Email;
-import com.foo.module2.model.MyBean;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemTimeout;
 
 /**
  * Integration test for Bean Validation and Hibernate Validator under OSGi.
@@ -63,9 +56,6 @@ public class OsgiIntegrationTest {
 	@Inject
 	private ValidatorFactory validatorFactory;
 
-	@Inject
-	private HibernateValidatorConfiguration configuration;
-
 	@Configuration
 	public Option[] config() {
 
@@ -76,6 +66,7 @@ public class OsgiIntegrationTest {
 				mavenBundle( "org.hibernate", "hibernate-validator-osgi-integrationtest-module-1", "5.0.0-SNAPSHOT" ),
 				mavenBundle( "org.hibernate", "hibernate-validator-osgi-integrationtest-module-2", "5.0.0-SNAPSHOT" ),
 				junitBundles(),
+				systemTimeout( 10 * 60 * 1000 ),
 				felix().version( "3.2.2" )
 		);
 	}
@@ -86,14 +77,12 @@ public class OsgiIntegrationTest {
 	}
 
 	@Test
-	@Ignore
 	public void shouldRegisterValidatorFactory() {
 
 		assertNotNull( validatorFactory );
 	}
 
 	@Test
-	@Ignore
 	public void shouldProvideValidator() {
 
 		Set<ConstraintViolation<Foo>> constraintViolations = validatorFactory.getValidator().validate( new Foo() );
@@ -103,7 +92,6 @@ public class OsgiIntegrationTest {
 	}
 
 	@Test
-	@Ignore
 	public void shouldValidateCustomConstraint() {
 
 		Set<ConstraintViolation<Bar>> constraintViolations = validatorFactory.getValidator().validate( new Bar() );
@@ -113,20 +101,10 @@ public class OsgiIntegrationTest {
 	}
 
 	@Test
-	@Ignore
 	public void shouldValidateCustomConstraintFromOtherOsgiBundle() {
-		configuration.messageInterpolator(
-				new ResourceBundleMessageInterpolator(
-						(ResourceBundleLocator) new AggregateResourceBundleLocator(
-								Arrays.asList(
-										"ValidationMessages",
-										"Module1ValidationMessages"
-								)
-						)
-				)
-		);
 
-		Validator validator = configuration.buildValidatorFactory().getValidator();
+		Validator validator = validatorFactory.getValidator();
+
 		Set<ConstraintViolation<Baz>> constraintViolations = validator.validate( new Baz() );
 
 		assertEquals( 1, constraintViolations.size() );
@@ -136,18 +114,7 @@ public class OsgiIntegrationTest {
 	@Test
 	public void shouldValidateConstraintDefinedInXml() {
 
-		configuration.messageInterpolator(
-				new ResourceBundleMessageInterpolator(
-						(ResourceBundleLocator) new AggregateResourceBundleLocator(
-								Arrays.asList(
-										"ValidationMessages",
-										"Module1ValidationMessages"
-								)
-						)
-				)
-		);
-
-		Validator validator = configuration.buildValidatorFactory().getValidator();
+		Validator validator = validatorFactory.getValidator();
 
 		Set<ConstraintViolation<MyBean>> constraintViolations = validator.validate( new MyBean() );
 

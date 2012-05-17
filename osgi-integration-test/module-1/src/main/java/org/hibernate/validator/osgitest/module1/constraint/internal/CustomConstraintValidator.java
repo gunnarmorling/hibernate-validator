@@ -14,13 +14,12 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.hibernate.validator.osgitest.module1.internal;
+package org.hibernate.validator.osgitest.module1.constraint.internal;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.hibernate.validator.osgitest.module1.CustomConstraint;
-
+import org.hibernate.validator.osgitest.module1.constraint.CustomConstraint;
 
 /**
  * @author Gunnar Morling

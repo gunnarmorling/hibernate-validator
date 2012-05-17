@@ -14,25 +14,20 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.hibernate.validator.osgitest.constraint;
+package org.hibernate.validator.osgitest.module2.model;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import javax.validation.Constraint;
-import javax.validation.Payload;
+/**
+ * @author Gunnar Morling
+ */
+public class MyBean {
 
-@Documented
-@Constraint(validatedBy = { DummyEmailValidator.class })
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE })
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Email {
+	private String bar = "";
 
-	String message() default "{org.hibernate.validator.osgitest.constraint.Email.message}";
+	public String getBar() {
+		return bar;
+	}
 
-	Class<?>[] groups() default { };
-
-	Class<? extends Payload>[] payload() default { };
+	public void setBar(String bar) {
+		this.bar = bar;
+	}
 }

@@ -19,18 +19,19 @@ package com.foo.module2;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import com.foo.module1.constraint.CustomConstraint;
-
 /**
+ * Registers a validator factory using this module's class loader and the
+ * resource bundles of this application.
+ *
  * @author Gunnar Morling
  */
 public class Activator implements BundleActivator {
 
-	private ValidationProviderServiceTracker tracker;
+	private ValidationProviderResolverTracker tracker;
 
 	public void start(BundleContext context) throws Exception {
 
-		tracker = new ValidationProviderServiceTracker( context );
+		tracker = new ValidationProviderResolverTracker( context );
 		tracker.open();
 	}
 

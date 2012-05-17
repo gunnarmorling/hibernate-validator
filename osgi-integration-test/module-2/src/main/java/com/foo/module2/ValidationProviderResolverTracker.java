@@ -16,6 +16,9 @@
 */
 package com.foo.module2;
 
+import java.util.Arrays;
+import javax.validation.Validation;
+import javax.validation.ValidationProviderResolver;
 import javax.validation.ValidatorFactory;
 
 import org.osgi.framework.BundleContext;
@@ -23,32 +26,48 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
-import org.hibernate.validator.HibernateValidatorConfiguration;
+import org.hibernate.validator.HibernateValidator;
+import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
+import org.hibernate.validator.resourceloading.AggregateResourceBundleLocator;
+import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
 
 /**
  * @author Gunnar Morling
  */
-public class ValidationProviderServiceTracker extends ServiceTracker {
+public class ValidationProviderResolverTracker extends ServiceTracker {
 
 	private ServiceRegistration factoryRegistration;
 
-	public ValidationProviderServiceTracker(BundleContext bundleContext) {
-		super( bundleContext, HibernateValidatorConfiguration.class.getName(), null );
+	public ValidationProviderResolverTracker(BundleContext bundleContext) {
+		super( bundleContext, ValidationProviderResolver.class.getName(), null );
 	}
 
 	@Override
 	public synchronized Object addingService(ServiceReference reference) {
 
-		HibernateValidatorConfiguration configuration = (HibernateValidatorConfiguration) context.getService( reference );
-		configuration.userClassLoader( ValidationProviderServiceTracker.class.getClassLoader() );
+		ValidationProviderResolver providerResolver = (ValidationProviderResolver) context.getService( reference );
 
-		ValidatorFactory validatorFactory = configuration.buildValidatorFactory();
+		ValidatorFactory validatorFactory = Validation
+				.byProvider( HibernateValidator.class )
+				.providerResolver( providerResolver )
+				.configure().userClassLoader( ValidationProviderResolverTracker.class.getClassLoader() )
+				.messageInterpolator(
+						new ResourceBundleMessageInterpolator(
+								(ResourceBundleLocator) new AggregateResourceBundleLocator(
+										Arrays.asList(
+												"ValidationMessages",
+												"Module1ValidationMessages"
+										)
+								)
+						)
+				)
+				.buildValidatorFactory();
 
 		factoryRegistration = context.registerService(
 				ValidatorFactory.class.getName(), validatorFactory, null
 		);
 
-		return configuration;
+		return providerResolver;
 	}
 
 	@Override

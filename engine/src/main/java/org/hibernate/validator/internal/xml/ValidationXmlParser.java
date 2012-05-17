@@ -81,7 +81,7 @@ public class ValidationXmlParser {
 			try {
 				@SuppressWarnings("unchecked")
 				Class<ConstraintValidatorFactory> clazz = (Class<ConstraintValidatorFactory>) ReflectionHelper.loadClass(
-						constraintFactoryClass, this.getClass()
+						constraintFactoryClass, userClassLoader
 				);
 				xmlParameters.setConstraintValidatorFactory(
 						ReflectionHelper.newInstance(
@@ -127,7 +127,7 @@ public class ValidationXmlParser {
 			try {
 				@SuppressWarnings("unchecked")
 				Class<MessageInterpolator> clazz = (Class<MessageInterpolator>) ReflectionHelper.loadClass(
-						messageInterpolatorClass, this.getClass()
+						messageInterpolatorClass, userClassLoader
 				);
 				xmlParameters.setMessageInterpolator( clazz.newInstance() );
 				log.usingMessageInterpolator( messageInterpolatorClass );
@@ -150,7 +150,7 @@ public class ValidationXmlParser {
 			try {
 				@SuppressWarnings("unchecked")
 				Class<TraversableResolver> clazz = (Class<TraversableResolver>) ReflectionHelper.loadClass(
-						traversableResolverClass, this.getClass()
+						traversableResolverClass, userClassLoader
 				);
 				xmlParameters.setTraversableResolver( clazz.newInstance() );
 				log.usingTraversableResolver( traversableResolverClass );
@@ -174,7 +174,7 @@ public class ValidationXmlParser {
 			try {
 				xmlParamters.setProviderClass(
 						(Class<? extends ValidationProvider<?>>) ReflectionHelper.loadClass(
-								providerClassName, this.getClass()
+								providerClassName, userClassLoader
 						)
 				);
 				log.usingValidationProvider( providerClassName );

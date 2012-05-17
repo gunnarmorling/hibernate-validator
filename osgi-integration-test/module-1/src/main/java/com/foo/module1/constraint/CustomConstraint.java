@@ -37,4 +37,6 @@ public @interface CustomConstraint {
 	Class<?>[] groups() default { };
 
 	Class<? extends Payload>[] payload() default { };
+
+	Class<?> value() default Object.class;
 }

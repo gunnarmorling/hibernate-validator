@@ -118,7 +118,11 @@ public final class LoadClass implements PrivilegedAction<Class<?>> {
 
 		// 3. try caller class loader
 		try {
-			return Class.forName( className, true, caller.getClassLoader() );
+			return Class.forName(
+					className,
+					true,
+					caller != null ? caller.getClassLoader() : LoadClass.class.getClassLoader()
+			);
 		}
 		catch ( ClassNotFoundException e ) {
 			throw log.getUnableToLoadClassException( className, e );

@@ -1,6 +1,6 @@
 /*
 * JBoss, Home of Professional Open Source
-* Copyright 2012, Red Hat, Inc. and/or its affiliates, and individual contributors
+* Copyright 2011, Red Hat, Inc. and/or its affiliates, and individual contributors
 * by the @authors tag. See the copyright.txt in the distribution for a
 * full listing of individual contributors.
 *
@@ -14,33 +14,31 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.foo.module2.model;
+package com.foo.module2;
 
-import javax.validation.constraints.NotNull;
+import java.lang.annotation.ElementType;
+import javax.validation.Path;
+import javax.validation.Path.Node;
+import javax.validation.TraversableResolver;
 
 /**
  * @author Gunnar Morling
  */
-public class MyBean {
+public class CustomTraversableResolver implements TraversableResolver {
 
-	private String bar = "";
+	@Override
+	public boolean isReachable(Object traversableObject,
+							   Node traversableProperty, Class<?> rootBeanType,
+							   Path pathToTraversableObject, ElementType elementType) {
 
-	@NotNull
-	private String foo;
-
-	public String getBar() {
-		return bar;
+		return true;
 	}
 
-	public void setBar(String bar) {
-		this.bar = bar;
-	}
+	@Override
+	public boolean isCascadable(Object traversableObject,
+								Node traversableProperty, Class<?> rootBeanType,
+								Path pathToTraversableObject, ElementType elementType) {
 
-	public String getFoo() {
-		return foo;
-	}
-
-	public void setFoo(String foo) {
-		this.foo = foo;
+		return true;
 	}
 }

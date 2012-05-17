@@ -171,7 +171,7 @@ public class XmlMappingParser {
 				Class<? extends ConstraintValidator<?, ?>> validatorClass;
 				validatorClass = (Class<? extends ConstraintValidator<?, ?>>) ReflectionHelper.loadClass(
 						validatorClassName,
-						this.getClass()
+						userClassLoader
 				);
 
 
@@ -528,7 +528,7 @@ public class XmlMappingParser {
 			returnValue = value;
 		}
 		else if ( returnType.getName().equals( Class.class.getName() ) ) {
-			returnValue = ReflectionHelper.loadClass( value, this.getClass() );
+			returnValue = ReflectionHelper.loadClass( value, userClassLoader );
 		}
 		else {
 			try {

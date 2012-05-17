@@ -14,7 +14,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.hibernate.validator.osgitest.module2.model;
+package com.foo.module2.model;
 
 /**
  * @author Gunnar Morling

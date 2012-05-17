@@ -51,7 +51,7 @@
                             javax.validation.*;version="1.1.0-SNAPSHOT"
                         </Import-Package>
                         <Export-Package>
-                            org.hibernate.validator.osgitest.module1.constraint;version="${project.version}"
+                            com.foo.module1.constraint;version="${project.version}"
                         </Export-Package>
                     </instructions>
                 </configuration>

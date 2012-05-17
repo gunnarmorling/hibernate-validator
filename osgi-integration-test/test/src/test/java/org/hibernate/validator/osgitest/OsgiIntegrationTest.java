@@ -37,11 +37,12 @@ import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
 import org.hibernate.validator.HibernateValidatorConfiguration;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
-import org.hibernate.validator.osgitest.module1.constraint.CustomConstraint;
-import org.hibernate.validator.osgitest.module2.constraint.Email;
-import org.hibernate.validator.osgitest.module2.model.MyBean;
 import org.hibernate.validator.resourceloading.AggregateResourceBundleLocator;
 import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
+
+import com.foo.module1.constraint.CustomConstraint;
+import com.foo.module2.constraint.Email;
+import com.foo.module2.model.MyBean;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

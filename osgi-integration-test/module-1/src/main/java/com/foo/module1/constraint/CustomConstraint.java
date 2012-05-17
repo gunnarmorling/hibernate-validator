@@ -14,22 +14,27 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.hibernate.validator.osgitest.module1.constraint.internal;
+package com.foo.module1.constraint;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import javax.validation.Constraint;
+import javax.validation.Payload;
 
-import org.hibernate.validator.osgitest.module1.constraint.CustomConstraint;
+import com.foo.module1.constraint.internal.CustomConstraintValidator;
 
-/**
- * @author Gunnar Morling
- */
-public class CustomConstraintValidator implements ConstraintValidator<CustomConstraint, String> {
+@Documented
+@Constraint(validatedBy = { CustomConstraintValidator.class })
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface CustomConstraint {
 
-	public void initialize(CustomConstraint constraintAnnotation) {
-	}
+	String message() default "{org.hibernate.validator.osgitest.module1.CustomConstraint.message}";
 
-	public boolean isValid(String value, ConstraintValidatorContext context) {
-		return false;
-	}
+	Class<?>[] groups() default { };
+
+	Class<? extends Payload>[] payload() default { };
 }

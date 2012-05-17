@@ -71,14 +71,14 @@
                             org.osgi.util.*;version="0",
                             javax.validation.*;version="1.1.0-SNAPSHOT",
                             org.hibernate.validator.*;version="${project.version}",
-                            org.hibernate.validator.osgitest.module1.constraint;version="${project.version}"
+                            com.foo.module1.constraint;version="${project.version}"
                         </Import-Package>
                         <Export-Package>
-                            org.hibernate.validator.osgitest.module2;version="${project.version}",
-                            org.hibernate.validator.osgitest.module2.constraint;version="${project.version}",
-                            org.hibernate.validator.osgitest.module2.model;version="${project.version}"
+                            com.foo.module2;version="${project.version}",
+                            com.foo.module2.constraint;version="${project.version}",
+                            com.foo.module2.model;version="${project.version}"
                         </Export-Package>
-                        <Bundle-Activator>org.hibernate.validator.osgitest.module2.Activator</Bundle-Activator>
+                        <Bundle-Activator>com.foo.module2.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>

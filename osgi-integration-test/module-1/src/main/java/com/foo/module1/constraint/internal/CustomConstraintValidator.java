@@ -1,6 +1,6 @@
 /*
 * JBoss, Home of Professional Open Source
-* Copyright 2011, Red Hat, Inc. and/or its affiliates, and individual contributors
+* Copyright 2012, Red Hat, Inc. and/or its affiliates, and individual contributors
 * by the @authors tag. See the copyright.txt in the distribution for a
 * full listing of individual contributors.
 *
@@ -14,25 +14,22 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.hibernate.validator.osgitest.module2;
+package com.foo.module1.constraint.internal;
 
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+import com.foo.module1.constraint.CustomConstraint;
 
 /**
  * @author Gunnar Morling
  */
-public class Activator implements BundleActivator {
+public class CustomConstraintValidator implements ConstraintValidator<CustomConstraint, String> {
 
-	private ValidationProviderServiceTracker tracker;
-
-	public void start(BundleContext context) throws Exception {
-
-		tracker = new ValidationProviderServiceTracker( context );
-		tracker.open();
+	public void initialize(CustomConstraint constraintAnnotation) {
 	}
 
-	public void stop(BundleContext context) throws Exception {
-		tracker.close();
+	public boolean isValid(String value, ConstraintValidatorContext context) {
+		return false;
 	}
 }

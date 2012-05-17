@@ -74,12 +74,13 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 	private final ParameterNameProvider defaultParameterNameProvider;
 
 	private ValidationProviderResolver providerResolver;
-	private ValidationBootstrapParameters validationBootstrapParameters;
+	private final ValidationBootstrapParameters validationBootstrapParameters;
 	private boolean ignoreXmlConfiguration = false;
-	private Set<InputStream> configurationStreams = CollectionHelper.newHashSet();
-	private Set<ConstraintMapping> programmaticMappings = CollectionHelper.newHashSet();
+	private final Set<InputStream> configurationStreams = CollectionHelper.newHashSet();
+	private final Set<ConstraintMapping> programmaticMappings = CollectionHelper.newHashSet();
 	private boolean failFast;
 	private BootstrapConfiguration bootstrapConfiguration;
+	private ClassLoader userClassLoader;
 
 	public ConfigurationImpl(BootstrapState state) {
 		this();
@@ -109,11 +110,13 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 		this.defaultMessageInterpolator = new ResourceBundleMessageInterpolator( defaultResourceBundleLocator );
 	}
 
+	@Override
 	public final HibernateValidatorConfiguration ignoreXmlConfiguration() {
 		ignoreXmlConfiguration = true;
 		return this;
 	}
 
+	@Override
 	public final ConfigurationImpl messageInterpolator(MessageInterpolator interpolator) {
 		if ( log.isDebugEnabled() ) {
 			if ( interpolator != null ) {
@@ -124,6 +127,7 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 		return this;
 	}
 
+	@Override
 	public final ConfigurationImpl traversableResolver(TraversableResolver resolver) {
 		if ( log.isDebugEnabled() ) {
 			if ( resolver != null ) {
@@ -134,6 +138,7 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 		return this;
 	}
 
+	@Override
 	public final ConfigurationImpl constraintValidatorFactory(ConstraintValidatorFactory constraintValidatorFactory) {
 		if ( log.isDebugEnabled() ) {
 			if ( constraintValidatorFactory != null ) {
@@ -161,6 +166,7 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 		return this;
 	}
 
+	@Override
 	public final HibernateValidatorConfiguration addMapping(InputStream stream) {
 		Contracts.assertNotNull( stream, MESSAGES.parameterMustNotBeNull( "stream" ) );
 
@@ -168,15 +174,24 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 		return this;
 	}
 
+	@Override
 	public final HibernateValidatorConfiguration failFast(boolean failFast) {
 		this.failFast = failFast;
 		return this;
 	}
 
+	@Override
+	public final HibernateValidatorConfiguration userClassLoader(ClassLoader userClassLoader) {
+		this.userClassLoader = userClassLoader;
+		return this;
+	}
+
+	@Override
 	public final ConstraintMapping createConstraintMapping() {
 		return new DefaultConstraintMapping();
 	}
 
+	@Override
 	public final HibernateValidatorConfiguration addMapping(ConstraintMapping mapping) {
 		Contracts.assertNotNull( mapping, MESSAGES.parameterMustNotBeNull( "mapping" ) );
 
@@ -184,6 +199,7 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 		return this;
 	}
 
+	@Override
 	public final HibernateValidatorConfiguration addProperty(String name, String value) {
 		if ( value != null ) {
 			validationBootstrapParameters.addConfigProperty( name, value );
@@ -191,6 +207,7 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 		return this;
 	}
 
+	@Override
 	public final ValidatorFactory buildValidatorFactory() {
 		parseValidationXml();
 		ValidatorFactory factory = null;
@@ -233,14 +250,17 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 		return factory;
 	}
 
+	@Override
 	public final boolean isIgnoreXmlConfiguration() {
 		return ignoreXmlConfiguration;
 	}
 
+	@Override
 	public final MessageInterpolator getMessageInterpolator() {
 		return validationBootstrapParameters.getMessageInterpolator();
 	}
 
+	@Override
 	public final Set<InputStream> getMappingStreams() {
 		return validationBootstrapParameters.getMappings();
 	}
@@ -249,10 +269,16 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 		return failFast;
 	}
 
+	public ClassLoader getUserClassLoader() {
+		return userClassLoader;
+	}
+
+	@Override
 	public final ConstraintValidatorFactory getConstraintValidatorFactory() {
 		return validationBootstrapParameters.getConstraintValidatorFactory();
 	}
 
+	@Override
 	public final TraversableResolver getTraversableResolver() {
 		return validationBootstrapParameters.getTraversableResolver();
 	}
@@ -260,7 +286,7 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 	@Override
 	public BootstrapConfiguration getBootstrapConfiguration() {
 		if ( bootstrapConfiguration == null ) {
-			bootstrapConfiguration = new ValidationXmlParser().parseValidationXml();
+			bootstrapConfiguration = new ValidationXmlParser( userClassLoader ).parseValidationXml();
 		}
 		return bootstrapConfiguration;
 	}
@@ -270,22 +296,27 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 		return validationBootstrapParameters.getParameterNameProvider();
 	}
 
+	@Override
 	public final Map<String, String> getProperties() {
 		return validationBootstrapParameters.getConfigProperties();
 	}
 
+	@Override
 	public final MessageInterpolator getDefaultMessageInterpolator() {
 		return defaultMessageInterpolator;
 	}
 
+	@Override
 	public final TraversableResolver getDefaultTraversableResolver() {
 		return defaultTraversableResolver;
 	}
 
+	@Override
 	public final ConstraintValidatorFactory getDefaultConstraintValidatorFactory() {
 		return defaultConstraintValidatorFactory;
 	}
 
+	@Override
 	public final ResourceBundleLocator getDefaultResourceBundleLocator() {
 		return defaultResourceBundleLocator;
 	}

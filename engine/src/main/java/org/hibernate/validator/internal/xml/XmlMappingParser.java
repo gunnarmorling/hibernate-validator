@@ -71,6 +71,7 @@ public class XmlMappingParser {
 
 	private final Set<Class<?>> processedClasses = newHashSet();
 	private final ConstraintHelper constraintHelper;
+	private final ClassLoader userClassLoader;
 	private final AnnotationProcessingOptions annotationProcessingOptions;
 	private final Map<Class<?>, Set<MetaConstraint<?>>> constraintMap;
 	private final Map<Class<?>, List<Member>> cascadedMembers;
@@ -89,8 +90,9 @@ public class XmlMappingParser {
 		SCHEMAS_BY_VERSION.put( "1.1", "META-INF/validation-mapping-1.1.xsd" );
 	}
 
-	public XmlMappingParser(ConstraintHelper constraintHelper) {
+	public XmlMappingParser(ConstraintHelper constraintHelper, ClassLoader userClassLoader) {
 		this.constraintHelper = constraintHelper;
+		this.userClassLoader = userClassLoader;
 		this.annotationProcessingOptions = new AnnotationProcessingOptions();
 		this.constraintMap = newHashMap();
 		this.cascadedMembers = newHashMap();
@@ -606,7 +608,7 @@ public class XmlMappingParser {
 		else {
 			fullyQualifiedClass = defaultPackage + PACKAGE_SEPARATOR + clazz;
 		}
-		return ReflectionHelper.loadClass( fullyQualifiedClass, this.getClass() );
+		return ReflectionHelper.loadClass( fullyQualifiedClass, userClassLoader );
 	}
 
 	private boolean isQualifiedClass(String clazz) {

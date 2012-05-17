@@ -36,13 +36,20 @@ public final class LoadClass implements PrivilegedAction<Class<?>> {
 
 	private final Class<?> caller;
 
-	public static LoadClass action(String className, Class<?> caller) {
-		return new LoadClass( className, caller );
+	private final ClassLoader userClassLoader;
+
+	public static LoadClass action(String className, ClassLoader userClassLoader) {
+		return new LoadClass( className, null, userClassLoader );
 	}
 
-	private LoadClass(String className, Class<?> caller) {
+	public static LoadClass action(String className, Class<?> caller) {
+		return new LoadClass( className, caller, null );
+	}
+
+	private LoadClass(String className, Class<?> caller, ClassLoader userClassLoader) {
 		this.className = className;
 		this.caller = caller;
+		this.userClassLoader = userClassLoader;
 	}
 
 	public Class<?> run() {
@@ -81,6 +88,21 @@ public final class LoadClass implements PrivilegedAction<Class<?>> {
 	}
 
 	private Class<?> loadNonValidatorClass() {
+
+		// 1. try user class loader
+		try {
+			if ( userClassLoader != null ) {
+				return userClassLoader.loadClass( className );
+			}
+		}
+		catch ( ClassNotFoundException e ) {
+			// ignore
+		}
+		catch ( RuntimeException e ) {
+			// ignore
+		}
+
+		// 2. try context class loader
 		try {
 			ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 			if ( contextClassLoader != null ) {
@@ -93,6 +115,8 @@ public final class LoadClass implements PrivilegedAction<Class<?>> {
 		catch ( RuntimeException e ) {
 			// ignore
 		}
+
+		// 3. try caller class loader
 		try {
 			return Class.forName( className, true, caller.getClassLoader() );
 		}

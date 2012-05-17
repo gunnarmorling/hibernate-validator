@@ -31,6 +31,7 @@ import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
  * @author Hardy Ferentschik
  */
 public interface HibernateValidatorConfiguration extends Configuration<HibernateValidatorConfiguration> {
+
 	/**
 	 * Property corresponding to the {@link #failFast} method.
 	 * Accepts {@code true} or {@code false}. Defaults to {@code false}.
@@ -98,4 +99,15 @@ public interface HibernateValidatorConfiguration extends Configuration<Hibernate
 	 * @return {@code this} following the chaining method pattern
 	 */
 	HibernateValidatorConfiguration failFast(boolean failFast);
+
+	/**
+	 * Sets the class loader to be used for loading user provided resources (XML
+	 * descriptors, custom constraint validators etc.).
+	 *
+	 * @param userClassLoader The user class loader.
+	 *
+	 * @return {@code this} following the chaining method pattern
+	 */
+	HibernateValidatorConfiguration userClassLoader(ClassLoader userClassLoader);
+
 }

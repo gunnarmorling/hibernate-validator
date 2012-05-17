@@ -60,6 +60,12 @@ public class ValidationXmlParser {
 		SCHEMAS_BY_VERSION.put( "1.0", "META-INF/validation-configuration-1.0.xsd" );
 		SCHEMAS_BY_VERSION.put( "1.1", "META-INF/validation-configuration-1.1.xsd" );
 	}
+	
+	private final ClassLoader userClassLoader;
+
+	public ValidationXmlParser(ClassLoader userClassLoader) {
+		this.userClassLoader = userClassLoader;
+	}	
 
 	/**
 	 * Tries to check whether a <i>validation.xml</i> file exists and parses it.

@@ -108,6 +108,16 @@ public final class ReflectionHelper {
 		return run( GetClassLoader.fromClass( clazz ) );
 	}
 
+	public static Class<?> loadClass(String className, ClassLoader classLoader) {
+		LoadClass action = LoadClass.action( className, classLoader );
+		if ( System.getSecurityManager() != null ) {
+			return AccessController.doPrivileged( action );
+		}
+		else {
+			return action.run();
+		}
+	}
+
 	public static Class<?> loadClass(String className, Class<?> caller) {
 		return run( LoadClass.action( className, caller ) );
 	}

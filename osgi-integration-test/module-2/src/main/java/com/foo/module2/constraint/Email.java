@@ -14,7 +14,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.hibernate.validator.osgitest.module1.constraint;
+package com.foo.module2.constraint;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -24,15 +24,15 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import org.hibernate.validator.osgitest.module1.constraint.internal.CustomConstraintValidator;
+import com.foo.module2.constraint.internal.DummyEmailValidator;
 
 @Documented
-@Constraint(validatedBy = { CustomConstraintValidator.class })
+@Constraint(validatedBy = { DummyEmailValidator.class })
 @Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CustomConstraint {
+public @interface Email {
 
-	String message() default "{org.hibernate.validator.osgitest.module1.CustomConstraint.message}";
+	String message() default "{com.foo.module2.constraint.Email.message}";
 
 	Class<?>[] groups() default { };
 

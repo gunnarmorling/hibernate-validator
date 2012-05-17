@@ -361,7 +361,7 @@ public class XmlMappingParser {
 
 		A annotation;
 		try {
-			annotation = AnnotationFactory.create( annotationDescriptor, userClassLoader );
+			annotation = AnnotationFactory.create( annotationDescriptor );
 		}
 		catch ( RuntimeException e ) {
 			throw log.getUnableToCreateAnnotationForConfiguredConstraintException( e.getMessage(), e );
@@ -462,7 +462,7 @@ public class XmlMappingParser {
 			Object elementValue = getElementValue( elementType, parameterType );
 			annotationDescriptor.setValue( name, elementValue );
 		}
-		return AnnotationFactory.create( annotationDescriptor, userClassLoader );
+		return AnnotationFactory.create( annotationDescriptor );
 	}
 
 	private Object convertStringToReturnType(Class<?> returnType, String value) {

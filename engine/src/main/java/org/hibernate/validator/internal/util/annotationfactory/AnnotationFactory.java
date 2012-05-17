@@ -34,17 +34,9 @@ import org.hibernate.validator.internal.util.ReflectionHelper;
  */
 public class AnnotationFactory {
 
-	public static <T extends Annotation> T create(AnnotationDescriptor<T> descriptor) {
-		return create( descriptor, null );
-	}
-
 	@SuppressWarnings("unchecked")
-	public static <T extends Annotation> T create(AnnotationDescriptor<T> descriptor, ClassLoader classLoader) {
-		if ( classLoader == null ) {
-			classLoader = ReflectionHelper.getClassLoaderFromContext();
-		}
-
-		Class<T> proxyClass = (Class<T>) Proxy.getProxyClass( classLoader, descriptor.type() );
+	public static <T extends Annotation> T create(AnnotationDescriptor<T> descriptor) {
+		Class<T> proxyClass = (Class<T>) Proxy.getProxyClass( descriptor.type().getClassLoader(), descriptor.type() );
 		InvocationHandler handler = new AnnotationProxy( descriptor );
 		try {
 			return getProxyInstance( proxyClass, handler );

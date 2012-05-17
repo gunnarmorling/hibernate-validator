@@ -16,10 +16,14 @@
 */
 package org.hibernate.validator.osgitest;
 
+import java.lang.annotation.ElementType;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.ValidationProviderResolver;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
@@ -35,6 +39,14 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+
+import org.hibernate.validator.HibernateValidator;
+import org.hibernate.validator.HibernateValidatorConfiguration;
+import org.hibernate.validator.cfg.ConstraintMapping;
+import org.hibernate.validator.cfg.GenericConstraintDef;
+import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
+import org.hibernate.validator.resourceloading.AggregateResourceBundleLocator;
+import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -55,6 +67,9 @@ public class OsgiIntegrationTest {
 
 	@Inject
 	private ValidatorFactory validatorFactory;
+
+	@Inject
+	private ValidationProviderResolver providerResolver;
 
 	@Configuration
 	public Option[] config() {
@@ -122,6 +137,38 @@ public class OsgiIntegrationTest {
 		assertEquals( "Custom constraint not valid", constraintViolations.iterator().next().getMessage() );
 	}
 
+	@Test
+	public void shouldValidateConstraintDefinedViaApi() {
+
+		HibernateValidatorConfiguration configuration = Validation
+				.byProvider( HibernateValidator.class )
+				.providerResolver( providerResolver )
+				.configure()
+				.userClassLoader( OsgiIntegrationTest.class.getClassLoader() )
+				.messageInterpolator(
+						new ResourceBundleMessageInterpolator(
+								(ResourceBundleLocator) new AggregateResourceBundleLocator(
+										Arrays.asList( "Module1ValidationMessages" )
+								)
+						)
+				);
+
+		ConstraintMapping mapping = configuration.createConstraintMapping();
+
+		mapping.type( Qux.class ).property( "bar", ElementType.FIELD ).constraint(
+				new GenericConstraintDef<CustomConstraint>( CustomConstraint.class )
+		);
+
+		configuration.addMapping( mapping );
+
+		Validator validator = configuration.buildValidatorFactory().getValidator();
+
+		Set<ConstraintViolation<Qux>> constraintViolations = validator.validate( new Qux() );
+
+		assertEquals( 1, constraintViolations.size() );
+		assertEquals( "Custom constraint not valid", constraintViolations.iterator().next().getMessage() );
+	}
+
 	private static class Foo {
 
 		@SuppressWarnings("unused")
@@ -140,6 +187,12 @@ public class OsgiIntegrationTest {
 
 		@SuppressWarnings("unused")
 		@CustomConstraint
+		private String bar = "";
+	}
+
+	private static class Qux {
+
+		@SuppressWarnings("unused")
 		private String bar = "";
 	}
 }

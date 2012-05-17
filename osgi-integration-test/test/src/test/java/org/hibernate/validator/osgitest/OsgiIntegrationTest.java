@@ -18,6 +18,7 @@ package org.hibernate.validator.osgitest;
 
 import java.lang.annotation.ElementType;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import javax.inject.Inject;
@@ -50,6 +51,7 @@ import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
@@ -133,8 +135,12 @@ public class OsgiIntegrationTest {
 
 		Set<ConstraintViolation<MyBean>> constraintViolations = validator.validate( new MyBean() );
 
-		assertEquals( 1, constraintViolations.size() );
-		assertEquals( "Custom constraint not valid", constraintViolations.iterator().next().getMessage() );
+		assertEquals( 2, constraintViolations.size() );
+
+		Set<String> messages = getMessages( constraintViolations );
+		System.out.println( messages );
+		assertTrue( messages.contains( "Custom constraint not valid" ) );
+		assertTrue( messages.contains( "may not be null" ) );
 	}
 
 	@Test
@@ -167,6 +173,17 @@ public class OsgiIntegrationTest {
 
 		assertEquals( 1, constraintViolations.size() );
 		assertEquals( "Custom constraint not valid", constraintViolations.iterator().next().getMessage() );
+	}
+
+	private Set<String> getMessages(Set<? extends ConstraintViolation<?>> violations) {
+
+		Set<String> messages = new HashSet<String>();
+
+		for ( ConstraintViolation<?> constraintViolation : violations ) {
+			messages.add( constraintViolation.getMessage() );
+		}
+
+		return messages;
 	}
 
 	private static class Foo {

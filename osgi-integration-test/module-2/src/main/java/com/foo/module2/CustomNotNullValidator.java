@@ -1,6 +1,6 @@
 /*
 * JBoss, Home of Professional Open Source
-* Copyright 2012, Red Hat, Inc. and/or its affiliates, and individual contributors
+* Copyright 2011, Red Hat, Inc. and/or its affiliates, and individual contributors
 * by the @authors tag. See the copyright.txt in the distribution for a
 * full listing of individual contributors.
 *
@@ -14,33 +14,23 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.foo.module2.model;
+package com.foo.module2;
 
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 import javax.validation.constraints.NotNull;
 
 /**
  * @author Gunnar Morling
  */
-public class MyBean {
+public class CustomNotNullValidator implements ConstraintValidator<NotNull, Object> {
 
-	private String bar = "";
-
-	@NotNull
-	private String foo;
-
-	public String getBar() {
-		return bar;
+	@Override
+	public void initialize(NotNull constraintAnnotation) {
 	}
 
-	public void setBar(String bar) {
-		this.bar = bar;
-	}
-
-	public String getFoo() {
-		return foo;
-	}
-
-	public void setFoo(String foo) {
-		this.foo = foo;
+	@Override
+	public boolean isValid(Object value, ConstraintValidatorContext context) {
+		return value != null;
 	}
 }

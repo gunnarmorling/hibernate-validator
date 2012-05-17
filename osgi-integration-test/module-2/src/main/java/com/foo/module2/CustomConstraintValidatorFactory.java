@@ -1,6 +1,6 @@
 /*
 * JBoss, Home of Professional Open Source
-* Copyright 2012, Red Hat, Inc. and/or its affiliates, and individual contributors
+* Copyright 2011, Red Hat, Inc. and/or its affiliates, and individual contributors
 * by the @authors tag. See the copyright.txt in the distribution for a
 * full listing of individual contributors.
 *
@@ -14,33 +14,27 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.foo.module2.model;
+package com.foo.module2;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorFactory;
 
 /**
  * @author Gunnar Morling
  */
-public class MyBean {
+public class CustomConstraintValidatorFactory implements ConstraintValidatorFactory {
 
-	private String bar = "";
-
-	@NotNull
-	private String foo;
-
-	public String getBar() {
-		return bar;
+	@Override
+	public <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {
+		try {
+			return key.newInstance();
+		}
+		catch ( RuntimeException e ) {
+			throw e;
+		}
+		catch ( Exception e ) {
+			throw new RuntimeException( e );
+		}
 	}
 
-	public void setBar(String bar) {
-		this.bar = bar;
-	}
-
-	public String getFoo() {
-		return foo;
-	}
-
-	public void setFoo(String foo) {
-		this.foo = foo;
-	}
 }

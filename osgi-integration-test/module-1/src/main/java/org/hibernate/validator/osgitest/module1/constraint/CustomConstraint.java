@@ -14,7 +14,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.hibernate.validator.osgitest.module1;
+package org.hibernate.validator.osgitest.module1.constraint;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import org.hibernate.validator.osgitest.module1.internal.CustomConstraintValidator;
+import org.hibernate.validator.osgitest.module1.constraint.internal.CustomConstraintValidator;
 
 @Documented
 @Constraint(validatedBy = { CustomConstraintValidator.class })

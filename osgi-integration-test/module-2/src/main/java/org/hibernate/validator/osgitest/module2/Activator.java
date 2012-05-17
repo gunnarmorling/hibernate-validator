@@ -1,6 +1,6 @@
 /*
 * JBoss, Home of Professional Open Source
-* Copyright 2012, Red Hat, Inc. and/or its affiliates, and individual contributors
+* Copyright 2011, Red Hat, Inc. and/or its affiliates, and individual contributors
 * by the @authors tag. See the copyright.txt in the distribution for a
 * full listing of individual contributors.
 *
@@ -14,21 +14,25 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.hibernate.validator.osgitest.constraint;
+package org.hibernate.validator.osgitest.module2;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
 /**
  * @author Gunnar Morling
  */
-public class DummyEmailValidator implements ConstraintValidator<Email, String> {
+public class Activator implements BundleActivator {
 
-	public void initialize(Email constraintAnnotation) {
+	private ValidationProviderServiceTracker tracker;
+
+	public void start(BundleContext context) throws Exception {
+
+		tracker = new ValidationProviderServiceTracker( context );
+		tracker.open();
 	}
 
-	public boolean isValid(String value, ConstraintValidatorContext context) {
-		return false;
+	public void stop(BundleContext context) throws Exception {
+		tracker.close();
 	}
 }

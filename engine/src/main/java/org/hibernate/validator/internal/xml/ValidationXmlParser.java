@@ -49,6 +49,11 @@ public class ValidationXmlParser {
 	private static final String VALIDATION_XML_FILE = "META-INF/validation.xml";
 	private static final String VALIDATION_CONFIGURATION_XSD = "META-INF/validation-configuration-1.0.xsd";
 
+	private final ClassLoader userClassLoader;
+
+	public ValidationXmlParser(ClassLoader userClassLoader) {
+		this.userClassLoader = userClassLoader;
+	}
 
 	/**
 	 * Tries to check whether a validation.xml file exists and parses it using JAXB.
@@ -106,7 +111,7 @@ public class ValidationXmlParser {
 
 	private void setMappingStreamsFromXml(ValidationConfigType config, ValidationBootstrapParameters xmlParameters) {
 		for ( String mappingFileName : config.getConstraintMapping() ) {
-			log.debugf( "Trying to open input stream for %s.", mappingFileName);
+			log.debugf( "Trying to open input stream for %s.", mappingFileName );
 
 			InputStream in = getInputStreamForPath( mappingFileName );
 			if ( in == null ) {
@@ -223,7 +228,7 @@ public class ValidationXmlParser {
 
 		boolean isContextCL = true;
 		// try the context class loader first
-		ClassLoader loader = ReflectionHelper.getClassLoaderFromContext();
+		ClassLoader loader = userClassLoader != null ? userClassLoader : ReflectionHelper.getClassLoaderFromContext();
 
 		if ( loader == null ) {
 			log.debug( "No default context class loader, fall back to Bean Validation's loader" );

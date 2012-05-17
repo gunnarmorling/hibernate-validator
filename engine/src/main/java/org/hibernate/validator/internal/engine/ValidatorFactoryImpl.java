@@ -63,19 +63,10 @@ public class ValidatorFactoryImpl implements HibernateValidatorFactory {
 		ConstraintHelper constraintHelper = new ConstraintHelper();
 
 		List<MetaDataProvider> metaDataProviders = newArrayList();
-
-		// HV-302; don't load XmlMappingParser if not necessary
-		if ( !configurationState.getMappingStreams().isEmpty() ) {
-			metaDataProviders.add(
-					new XmlMetaDataProvider(
-							constraintHelper, configurationState.getMappingStreams()
-					)
-			);
-		}
-
 		Map<String, String> properties = configurationState.getProperties();
 
 		boolean tmpFailFast = false;
+		ClassLoader userClassLoader = null;
 		if ( configurationState instanceof ConfigurationImpl ) {
 			ConfigurationImpl hibernateSpecificConfig = (ConfigurationImpl) configurationState;
 
@@ -89,7 +80,18 @@ public class ValidatorFactoryImpl implements HibernateValidatorFactory {
 			}
 			// check whether fail fast is programmatically enabled
 			tmpFailFast = hibernateSpecificConfig.getFailFast();
+			userClassLoader = hibernateSpecificConfig.getUserClassLoader();
 		}
+
+		// HV-302; don't load XmlMappingParser if not necessary
+		if ( !configurationState.getMappingStreams().isEmpty() ) {
+			metaDataProviders.add(
+					new XmlMetaDataProvider(
+							constraintHelper, configurationState.getMappingStreams(), userClassLoader
+					)
+			);
+		}
+
 		tmpFailFast = checkPropertiesForFailFast(
 				properties, tmpFailFast
 		);

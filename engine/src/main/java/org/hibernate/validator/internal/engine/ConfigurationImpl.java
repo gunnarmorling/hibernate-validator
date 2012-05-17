@@ -80,6 +80,7 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 	private Set<InputStream> configurationStreams = CollectionHelper.newHashSet();
 	private Set<ConstraintMapping> programmaticMappings = CollectionHelper.newHashSet();
 	private boolean failFast;
+	private ClassLoader userClassLoader;
 
 	public ConfigurationImpl(BootstrapState state) {
 		if ( state.getValidationProviderResolver() == null ) {
@@ -147,6 +148,11 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 
 	public final HibernateValidatorConfiguration failFast(boolean failFast) {
 		this.failFast = failFast;
+		return this;
+	}
+
+	public final HibernateValidatorConfiguration userClassLoader(ClassLoader userClassLoader) {
+		this.userClassLoader = userClassLoader;
 		return this;
 	}
 
@@ -228,6 +234,10 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 		return failFast;
 	}
 
+	public ClassLoader getUserClassLoader() {
+		return userClassLoader;
+	}
+
 	public final ConstraintValidatorFactory getConstraintValidatorFactory() {
 		return validationBootstrapParameters.getConstraintValidatorFactory();
 	}
@@ -284,7 +294,7 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 			}
 		}
 		else {
-			ValidationBootstrapParameters xmlParameters = new ValidationXmlParser().parseValidationXml();
+			ValidationBootstrapParameters xmlParameters = new ValidationXmlParser( userClassLoader ).parseValidationXml();
 			applyXmlSettings( xmlParameters );
 		}
 	}

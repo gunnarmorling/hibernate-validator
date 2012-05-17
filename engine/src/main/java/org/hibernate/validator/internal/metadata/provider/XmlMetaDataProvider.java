@@ -56,10 +56,10 @@ public class XmlMetaDataProvider extends MetaDataProviderKeyedByClassName {
 	 * @param constraintHelper the constraint helper
 	 * @param mappingStreams the input stream for the xml configuration
 	 */
-	public XmlMetaDataProvider(ConstraintHelper constraintHelper, Set<InputStream> mappingStreams) {
+	public XmlMetaDataProvider(ConstraintHelper constraintHelper, Set<InputStream> mappingStreams, ClassLoader userClassLoader) {
 		super( constraintHelper );
 
-		XmlMappingParser mappingParser = new XmlMappingParser( constraintHelper );
+		XmlMappingParser mappingParser = new XmlMappingParser( constraintHelper, userClassLoader );
 		mappingParser.parse( mappingStreams );
 
 		for ( Class<?> clazz : mappingParser.getXmlConfiguredClasses() ) {

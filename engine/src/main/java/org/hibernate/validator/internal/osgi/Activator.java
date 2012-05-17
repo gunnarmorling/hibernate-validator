@@ -22,8 +22,6 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import org.hibernate.validator.HibernateValidator;
-import org.hibernate.validator.HibernateValidatorConfiguration;
-import org.hibernate.validator.internal.engine.ConfigurationImpl;
 
 /**
  * Registers an instance of {@link HibernateValidator} as OSGi service.
@@ -34,17 +32,13 @@ public class Activator implements BundleActivator {
 
 	public void start(BundleContext context) throws Exception {
 
-		ValidationProvider<?> validationProvider = new HibernateValidator();
-
-		context.registerService( ValidationProvider.class.getName(), validationProvider, null );
 		context.registerService(
-				HibernateValidatorConfiguration.class.getName(),
-				new ConfigurationImpl( validationProvider ),
+				ValidationProvider.class.getName(),
+				new HibernateValidator(),
 				null
 		);
 	}
 
 	public void stop(BundleContext context) throws Exception {
 	}
-
 }

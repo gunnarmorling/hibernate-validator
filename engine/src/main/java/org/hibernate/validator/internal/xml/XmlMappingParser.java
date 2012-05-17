@@ -74,13 +74,15 @@ public class XmlMappingParser {
 
 	private final Set<Class<?>> processedClasses = newHashSet();
 	private final ConstraintHelper constraintHelper;
+	private final ClassLoader userClassLoader;
 	private final AnnotationProcessingOptions annotationProcessingOptions;
 	private final Map<Class<?>, Set<MetaConstraint<?>>> constraintMap;
 	private final Map<Class<?>, List<Member>> cascadedMembers;
 	private final Map<Class<?>, List<Class<?>>> defaultSequences;
 
-	public XmlMappingParser(ConstraintHelper constraintHelper) {
+	public XmlMappingParser(ConstraintHelper constraintHelper, ClassLoader userClassLoader) {
 		this.constraintHelper = constraintHelper;
+		this.userClassLoader = userClassLoader;
 		this.annotationProcessingOptions = new AnnotationProcessingOptions();
 		this.constraintMap = newHashMap();
 		this.cascadedMembers = newHashMap();
@@ -359,7 +361,7 @@ public class XmlMappingParser {
 
 		A annotation;
 		try {
-			annotation = AnnotationFactory.create( annotationDescriptor );
+			annotation = AnnotationFactory.create( annotationDescriptor, userClassLoader );
 		}
 		catch ( RuntimeException e ) {
 			throw log.getUnableToCreateAnnotationForConfiguredConstraintException( e.getMessage(), e );
@@ -460,7 +462,7 @@ public class XmlMappingParser {
 			Object elementValue = getElementValue( elementType, parameterType );
 			annotationDescriptor.setValue( name, elementValue );
 		}
-		return AnnotationFactory.create( annotationDescriptor );
+		return AnnotationFactory.create( annotationDescriptor, userClassLoader );
 	}
 
 	private Object convertStringToReturnType(Class<?> returnType, String value) {
@@ -586,7 +588,7 @@ public class XmlMappingParser {
 		else {
 			fullyQualifiedClass = defaultPackage + PACKAGE_SEPARATOR + clazz;
 		}
-		return ReflectionHelper.loadClass( fullyQualifiedClass, this.getClass() );
+		return ReflectionHelper.loadClass( fullyQualifiedClass, userClassLoader );
 	}
 
 	private boolean isQualifiedClass(String clazz) {

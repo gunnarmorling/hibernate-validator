@@ -79,6 +79,10 @@
                             com.foo.module2.model;version="${project.version}"
                         </Export-Package>
                         <Bundle-Activator>com.foo.module2.Activator</Bundle-Activator>
+                        <Hibernate-Validator-Resource-Bundle>
+                            ValidationMessages,
+                            Module1ValidationMessages
+                        </Hibernate-Validator-Resource-Bundle>
                     </instructions>
                 </configuration>
             </plugin>

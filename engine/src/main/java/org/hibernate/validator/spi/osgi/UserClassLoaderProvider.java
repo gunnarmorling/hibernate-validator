@@ -14,22 +14,20 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.foo.module2;
-
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
+package org.hibernate.validator.spi.osgi;
 
 /**
- * Registers a validator factory using this module's class loader and the
- * resource bundles of this application.
+ * Used to retrieve the class loader for retrieving and loading user-provided
+ * resources. Implementations are to be registered as OSGi service.
  *
  * @author Gunnar Morling
  */
-public class Activator implements BundleActivator {
+public interface UserClassLoaderProvider {
 
-	public void start(BundleContext context) throws Exception {
-	}
-
-	public void stop(BundleContext context) throws Exception {
-	}
+	/**
+	 * Returns the user class loader.
+	 *
+	 * @return The user class loader.
+	 */
+	ClassLoader getUserClassLoader();
 }

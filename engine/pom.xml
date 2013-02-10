@@ -132,6 +132,7 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -255,6 +256,7 @@
                             javax.persistence.*;version="[2.0.0,3.0.0)";resolution:=optional,
                             javax.validation.*;version="[1.0.0,2.0.0)",
                             javax.xml.*;version="0",
+                            javax.el.*;version="0",
                             org.xml.sax.*;version="0",
                             org.jboss.logging.*;version="[3.1.0,4.0.0)",
                             com.fasterxml.classmate.*;version="0.8.0",
@@ -269,6 +271,7 @@
                             org.hibernate.validator.constraints.*;version="${project.version}",
                             org.hibernate.validator.group;version="${project.version}",
                             org.hibernate.validator.messageinterpolation;version="${project.version}",
+                            org.hibernate.validator.osgi;version="${project.version}",
                             org.hibernate.validator.resourceloading;version="${project.version}",
                             org.hibernate.validator.spi.*;version="${project.version}"
                         </Export-Package>

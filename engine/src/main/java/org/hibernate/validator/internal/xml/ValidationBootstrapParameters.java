@@ -41,6 +41,7 @@ import org.hibernate.validator.internal.util.logging.LoggerFactory;
 public class ValidationBootstrapParameters {
 	private static final Log log = LoggerFactory.make();
 
+	private final ClassLoader classLoader;
 	private ConstraintValidatorFactory constraintValidatorFactory;
 	private MessageInterpolator messageInterpolator;
 	private TraversableResolver traversableResolver;
@@ -51,9 +52,11 @@ public class ValidationBootstrapParameters {
 	private final Set<InputStream> mappings = new HashSet<InputStream>();
 
 	public ValidationBootstrapParameters() {
+		this.classLoader = getClass().getClassLoader();
 	}
 
-	public ValidationBootstrapParameters(BootstrapConfiguration bootstrapConfiguration) {
+	public ValidationBootstrapParameters(BootstrapConfiguration bootstrapConfiguration, ClassLoader classLoader) {
+		this.classLoader = classLoader == null ? getClass().getClassLoader() : classLoader;
 		setProviderClass( bootstrapConfiguration.getDefaultProviderClassName() );
 		setMessageInterpolator( bootstrapConfiguration.getMessageInterpolatorClassName() );
 		setTraversableResolver( bootstrapConfiguration.getTraversableResolverClassName() );
@@ -137,7 +140,7 @@ public class ValidationBootstrapParameters {
 			try {
 				providerClass = (Class<? extends ValidationProvider<?>>) ReflectionHelper.loadClass(
 						providerFqcn,
-						this.getClass()
+						classLoader
 				);
 				log.usingValidationProvider( providerFqcn );
 			}
@@ -152,7 +155,7 @@ public class ValidationBootstrapParameters {
 			try {
 				@SuppressWarnings("unchecked")
 				Class<MessageInterpolator> messageInterpolatorClass = (Class<MessageInterpolator>) ReflectionHelper.loadClass(
-						messageInterpolatorFqcn, this.getClass()
+						messageInterpolatorFqcn, classLoader
 				);
 				messageInterpolator = ReflectionHelper.newInstance( messageInterpolatorClass, "message interpolator" );
 				log.usingMessageInterpolator( messageInterpolatorFqcn );
@@ -168,7 +171,7 @@ public class ValidationBootstrapParameters {
 			try {
 				@SuppressWarnings("unchecked")
 				Class<TraversableResolver> clazz = (Class<TraversableResolver>) ReflectionHelper.loadClass(
-						traversableResolverFqcn, this.getClass()
+						traversableResolverFqcn, classLoader
 				);
 				traversableResolver = ReflectionHelper.newInstance( clazz, "traversable resolver" );
 				log.usingTraversableResolver( traversableResolverFqcn );
@@ -184,7 +187,7 @@ public class ValidationBootstrapParameters {
 			try {
 				@SuppressWarnings("unchecked")
 				Class<ConstraintValidatorFactory> clazz = (Class<ConstraintValidatorFactory>) ReflectionHelper.loadClass(
-						constraintFactoryFqcn, this.getClass()
+						constraintFactoryFqcn, classLoader
 				);
 				constraintValidatorFactory = ReflectionHelper.newInstance( clazz, "constraint factory class" );
 				log.usingConstraintFactory( constraintFactoryFqcn );
@@ -200,7 +203,7 @@ public class ValidationBootstrapParameters {
 			try {
 				@SuppressWarnings("unchecked")
 				Class<ParameterNameProvider> clazz = (Class<ParameterNameProvider>) ReflectionHelper.loadClass(
-						parameterNameProviderFqcn, this.getClass()
+						parameterNameProviderFqcn, classLoader
 				);
 				parameterNameProvider = ReflectionHelper.newInstance( clazz, "parameter name provider class" );
 				log.usingParameterNameProvider( parameterNameProviderFqcn );
@@ -215,7 +218,7 @@ public class ValidationBootstrapParameters {
 		for ( String mappingFileName : mappingFileNames ) {
 			log.debugf( "Trying to open input stream for %s.", mappingFileName );
 
-			InputStream in = ResourceLoaderHelper.getResettableInputStreamForPath( mappingFileName );
+			InputStream in = ResourceLoaderHelper.getResettableInputStreamForPath( mappingFileName, classLoader );
 			if ( in == null ) {
 				throw log.getUnableToOpenInputStreamForMappingFileException( mappingFileName );
 			}

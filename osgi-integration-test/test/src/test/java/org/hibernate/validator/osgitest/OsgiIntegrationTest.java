@@ -24,7 +24,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
-import javax.validation.ValidationProviderResolver;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
@@ -32,6 +31,7 @@ import javax.validation.constraints.Min;
 import com.foo.module1.constraint.CustomConstraint;
 import com.foo.module2.constraint.Email;
 import com.foo.module2.model.MyBean;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,8 +46,8 @@ import org.hibernate.validator.HibernateValidatorConfiguration;
 import org.hibernate.validator.cfg.ConstraintMapping;
 import org.hibernate.validator.cfg.GenericConstraintDef;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
+import org.hibernate.validator.osgi.HibernateValidationProviderResolver;
 import org.hibernate.validator.resourceloading.AggregateResourceBundleLocator;
-import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -70,18 +70,19 @@ public class OsgiIntegrationTest {
 	@Inject
 	private ValidatorFactory validatorFactory;
 
-	@Inject
-	private ValidationProviderResolver providerResolver;
-
 	@Configuration
 	public Option[] config() {
 
 		return options(
 				mavenBundle( "org.hibernate", "hibernate-validator", "5.0.0-SNAPSHOT" ),
-				mavenBundle( "org.jboss.logging", "jboss-logging", "3.1.0.GA" ),
-				mavenBundle( "javax.validation", "validation-api-osgi", "1.1.0-SNAPSHOT" ),
+				mavenBundle( "org.jboss.logging", "jboss-logging", "3.1.1.GA" ),
+				mavenBundle( "com.fasterxml", "classmate", "0.8.0" ),
+				mavenBundle( "javax.validation", "validation-api", "1.1.0.Beta3" ),
 				mavenBundle( "org.hibernate", "hibernate-validator-osgi-integrationtest-module-1", "5.0.0-SNAPSHOT" ),
 				mavenBundle( "org.hibernate", "hibernate-validator-osgi-integrationtest-module-2", "5.0.0-SNAPSHOT" ),
+				mavenBundle( "de.odysseus.juel", "juel-spi", "2.2.6" ),
+				mavenBundle( "de.odysseus.juel", "juel-api", "2.2.6" ),
+				mavenBundle( "de.odysseus.juel", "juel-impl", "2.2.6" ),
 				junitBundles(),
 				systemTimeout( 10 * 60 * 1000 ),
 				felix().version( "3.2.2" )
@@ -91,6 +92,11 @@ public class OsgiIntegrationTest {
 	@BeforeClass
 	public static void setLocaleToEnglish() {
 		Locale.setDefault( Locale.ENGLISH );
+	}
+
+	@Before
+	public void setupContextClassLoader() {
+		Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
 	}
 
 	@Test
@@ -134,11 +140,11 @@ public class OsgiIntegrationTest {
 		Validator validator = validatorFactory.getValidator();
 
 		Set<ConstraintViolation<MyBean>> constraintViolations = validator.validate( new MyBean() );
+		Set<String> messages = getMessages( constraintViolations );
+		System.out.println( messages );
 
 		assertEquals( 2, constraintViolations.size() );
 
-		Set<String> messages = getMessages( constraintViolations );
-		System.out.println( messages );
 		assertTrue( messages.contains( "Custom constraint not valid" ) );
 		assertTrue( messages.contains( "may not be null" ) );
 	}
@@ -148,12 +154,12 @@ public class OsgiIntegrationTest {
 
 		HibernateValidatorConfiguration configuration = Validation
 				.byProvider( HibernateValidator.class )
-				.providerResolver( providerResolver )
+				.providerResolver( new HibernateValidationProviderResolver() )
 				.configure()
 				.userClassLoader( OsgiIntegrationTest.class.getClassLoader() )
 				.messageInterpolator(
 						new ResourceBundleMessageInterpolator(
-								(ResourceBundleLocator) new AggregateResourceBundleLocator(
+								new AggregateResourceBundleLocator(
 										Arrays.asList( "Module1ValidationMessages" )
 								)
 						)
@@ -190,26 +196,26 @@ public class OsgiIntegrationTest {
 
 		@SuppressWarnings("unused")
 		@Min(1)
-		private int foo = 0;
+		private final int foo = 0;
 	}
 
 	private static class Bar {
 
 		@SuppressWarnings("unused")
 		@Email
-		private String bar = "";
+		private final String bar = "";
 	}
 
 	private static class Baz {
 
 		@SuppressWarnings("unused")
 		@CustomConstraint
-		private String bar = "";
+		private final String bar = "";
 	}
 
 	private static class Qux {
 
 		@SuppressWarnings("unused")
-		private String bar = "";
+		private final String bar = "";
 	}
 }

@@ -1,6 +1,6 @@
 /*
 * JBoss, Home of Professional Open Source
-* Copyright 2011, Red Hat, Inc. and/or its affiliates, and individual contributors
+* Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual contributors
 * by the @authors tag. See the copyright.txt in the distribution for a
 * full listing of individual contributors.
 *
@@ -14,20 +14,22 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.hibernate.validator.spi.osgi;
+package org.hibernate.validator.osgi;
+
+import java.util.Arrays;
+import java.util.List;
+import javax.validation.ValidationProviderResolver;
+import javax.validation.spi.ValidationProvider;
+
+import org.hibernate.validator.HibernateValidator;
 
 /**
- * Used to retrieve the class loader for retrieving and loading user-provided
- * resources. Implementations are to be registered as OSGi service.
- *
  * @author Gunnar Morling
  */
-public interface UserClassLoaderProvider {
+public class HibernateValidationProviderResolver implements ValidationProviderResolver {
 
-	/**
-	 * Returns the user class loader.
-	 *
-	 * @return The user class loader.
-	 */
-	ClassLoader getUserClassLoader();
+	@Override
+	public List<ValidationProvider<?>> getValidationProviders() {
+		return Arrays.<ValidationProvider<?>>asList( new HibernateValidator() );
+	}
 }

@@ -35,33 +35,41 @@ public final class ResourceLoaderHelper {
 	 * contract.
 	 *
 	 * @param path The path of the requested input stream.
+	 * @param userClassLoader
 	 *
 	 * @return An input stream for the given path or {@code null} if no such
 	 *         resource exists.
 	 *
 	 * @see InputStream#markSupported()
 	 */
-	public static InputStream getResettableInputStreamForPath(String path) {
+	public static InputStream getResettableInputStreamForPath(String path, ClassLoader userClassLoader) {
 		//TODO not sure if it's the right thing to removing '/'
 		String inputPath = path;
 		if ( inputPath.startsWith( "/" ) ) {
 			inputPath = inputPath.substring( 1 );
 		}
 
-		boolean isContextCL = true;
-		// try the context class loader first
-		ClassLoader loader = ReflectionHelper.getClassLoaderFromContext();
+		InputStream inputStream = null;
 
-		if ( loader == null ) {
-			log.debug( "No default context class loader, fall back to Bean Validation's loader" );
-			loader = ReflectionHelper.getClassLoaderFromClass( ResourceLoaderHelper.class );
-			isContextCL = false;
+		if ( userClassLoader != null ) {
+			inputStream = userClassLoader.getResourceAsStream( inputPath );
 		}
-		InputStream inputStream = loader.getResourceAsStream( inputPath );
+
+		// try the context class loader first
+		if ( inputStream == null ) {
+			ClassLoader loader = ReflectionHelper.getClassLoaderFromContext();
+
+			if ( loader == null ) {
+				log.debug( "No default context class loader, fall back to Bean Validation's loader" );
+			}
+			else {
+				inputStream = loader.getResourceAsStream( inputPath );
+			}
+		}
 
 		// try the current class loader
-		if ( isContextCL && inputStream == null ) {
-			loader = ReflectionHelper.getClassLoaderFromClass( ResourceLoaderHelper.class );
+		if ( inputStream == null ) {
+			ClassLoader loader = ReflectionHelper.getClassLoaderFromClass( ResourceLoaderHelper.class );
 			inputStream = loader.getResourceAsStream( inputPath );
 		}
 

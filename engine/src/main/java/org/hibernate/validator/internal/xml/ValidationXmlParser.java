@@ -93,7 +93,10 @@ public class ValidationXmlParser {
 
 	private InputStream getInputStream() {
 		log.debugf( "Trying to load %s for XML based Validator configuration.", VALIDATION_XML_FILE );
-		InputStream inputStream = ResourceLoaderHelper.getResettableInputStreamForPath( VALIDATION_XML_FILE );
+		InputStream inputStream = ResourceLoaderHelper.getResettableInputStreamForPath(
+				VALIDATION_XML_FILE,
+				userClassLoader
+		);
 
 		if ( inputStream != null ) {
 			return inputStream;
@@ -169,13 +172,12 @@ public class ValidationXmlParser {
 	 * XML configuration, considering the special elements
 	 * {@link ExecutableType#ALL} and {@link ExecutableType#NONE}.
 	 *
-	 * @param validatedExecutables
-	 *            Schema type with executable types.
+	 * @param validatedExecutables Schema type with executable types.
 	 *
 	 * @return An enum set representing the given executable types.
 	 */
 	private EnumSet<ExecutableType> getValidatedExecutableTypes(ValidatedExecutablesType validatedExecutables) {
-		if( validatedExecutables == null ) {
+		if ( validatedExecutables == null ) {
 			return EnumSet.noneOf( ExecutableType.class );
 		}
 

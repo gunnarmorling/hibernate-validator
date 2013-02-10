@@ -25,16 +25,17 @@ import javax.validation.ConstraintValidatorFactory;
 public class CustomConstraintValidatorFactory implements ConstraintValidatorFactory {
 
 	@Override
-	public <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {
+	public final <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {
 		try {
 			return key.newInstance();
-		}
-		catch ( RuntimeException e ) {
-			throw e;
 		}
 		catch ( Exception e ) {
 			throw new RuntimeException( e );
 		}
 	}
 
+	@Override
+	public void releaseInstance(ConstraintValidator<?, ?> instance) {
+		// noop
+	}
 }

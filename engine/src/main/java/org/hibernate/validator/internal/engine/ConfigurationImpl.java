@@ -356,7 +356,10 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 			}
 		}
 		else {
-			ValidationBootstrapParameters xmlParameters = new ValidationBootstrapParameters( getBootstrapConfiguration() );
+			ValidationBootstrapParameters xmlParameters = new ValidationBootstrapParameters(
+					getBootstrapConfiguration(),
+					userClassLoader
+			);
 			applyXmlSettings( xmlParameters );
 		}
 	}

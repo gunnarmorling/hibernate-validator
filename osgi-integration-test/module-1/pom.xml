@@ -48,7 +48,7 @@
                 <configuration>
                     <instructions>
                         <Import-Package>
-                            javax.validation.*;version="1.1.0-SNAPSHOT"
+                            javax.validation.*;version="[1.0.0,2.0.0)"
                         </Import-Package>
                         <Export-Package>
                             com.foo.module1.constraint;version="${project.version}"

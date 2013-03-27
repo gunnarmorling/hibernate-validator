@@ -82,10 +82,10 @@ public class ConstrainedFieldBuilder {
 
 
 			// ignore annotations
-			if ( fieldType.getIgnoreAnnotations() != null ) {
+			if ( fieldType.isIgnoreAnnotations() != null ) {
 				annotationProcessingOptions.ignoreConstraintAnnotationsOnMember(
 						field,
-						fieldType.getIgnoreAnnotations()
+						fieldType.isIgnoreAnnotations()
 				);
 			}
 		}

@@ -94,10 +94,10 @@ public class ConstrainedExecutableBuilder {
 			ExecutableElement methodExecutableElement = ExecutableElement.forMethod( method );
 
 			// ignore annotations
-			if ( methodType.getIgnoreAnnotations() != null ) {
+			if ( methodType.isIgnoreAnnotations() != null ) {
 				annotationProcessingOptions.ignoreConstraintAnnotationsOnMember(
 						method,
-						methodType.getIgnoreAnnotations()
+						methodType.isIgnoreAnnotations()
 				);
 			}
 
@@ -154,10 +154,10 @@ public class ConstrainedExecutableBuilder {
 			ExecutableElement constructorExecutableElement = ExecutableElement.forConstructor( constructor );
 
 			// ignore annotations
-			if ( constructorType.getIgnoreAnnotations() != null ) {
+			if ( constructorType.isIgnoreAnnotations() != null ) {
 				annotationProcessingOptions.ignoreConstraintAnnotationsOnMember(
 						constructor,
-						constructorType.getIgnoreAnnotations()
+						constructorType.isIgnoreAnnotations()
 				);
 			}
 
@@ -253,10 +253,10 @@ public class ConstrainedExecutableBuilder {
 		}
 
 		// ignore annotations
-		if ( crossParameterType.getIgnoreAnnotations() != null ) {
+		if ( crossParameterType.isIgnoreAnnotations() != null ) {
 			annotationProcessingOptions.ignoreConstraintAnnotationsForCrossParameterConstraint(
 					executableElement.getMember(),
-					crossParameterType.getIgnoreAnnotations()
+					crossParameterType.isIgnoreAnnotations()
 			);
 		}
 
@@ -293,10 +293,10 @@ public class ConstrainedExecutableBuilder {
 		);
 
 		// ignore annotations
-		if ( returnValueType.getIgnoreAnnotations() != null ) {
+		if ( returnValueType.isIgnoreAnnotations() != null ) {
 			annotationProcessingOptions.ignoreConstraintAnnotationsForReturnValue(
 					executableElement.getMember(),
-					returnValueType.getIgnoreAnnotations()
+					returnValueType.isIgnoreAnnotations()
 			);
 		}
 

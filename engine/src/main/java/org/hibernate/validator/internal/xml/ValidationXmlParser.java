@@ -149,7 +149,7 @@ public class ValidationXmlParser {
 		EnumSet<ExecutableType> defaultValidatedExecutableTypes = executableValidationType == null
 				? getValidatedExecutableTypes( null )
 				: getValidatedExecutableTypes( executableValidationType.getDefaultValidatedExecutableTypes() );
-		boolean executableValidationEnabled = executableValidationType == null || executableValidationType.getEnabled();
+		boolean executableValidationEnabled = executableValidationType == null || executableValidationType.isEnabled();
 
 		return new BootstrapConfigurationImpl(
 				config.getDefaultProvider(),

@@ -72,10 +72,10 @@ public class ConstrainedTypeBuilder {
 		}
 
 		// ignore annotation
-		if ( classType.getIgnoreAnnotations() != null ) {
+		if ( classType.isIgnoreAnnotations() != null ) {
 			annotationProcessingOptions.ignoreClassLevelConstraintAnnotations(
 					beanClass,
-					classType.getIgnoreAnnotations()
+					classType.isIgnoreAnnotations()
 			);
 		}
 

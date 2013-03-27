@@ -119,7 +119,7 @@ public class XmlMappingParser {
 					// update annotation ignores
 					annotationProcessingOptions.ignoreAnnotationConstraintForClass(
 							beanClass,
-							bean.getIgnoreAnnotations()
+							bean.isIgnoreAnnotations()
 					);
 
 					ConstrainedType constrainedType = ConstrainedTypeBuilder.buildConstrainedType(
@@ -238,7 +238,7 @@ public class XmlMappingParser {
 		constraintHelper.putValidatorClasses(
 				annotationClass,
 				constraintValidatorClasses,
-				Boolean.TRUE.equals( validatedByType.getIncludeExistingValidators() )
+				Boolean.TRUE.equals( validatedByType.isIncludeExistingValidators() )
 		);
 	}
 

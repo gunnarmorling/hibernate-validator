@@ -186,18 +186,6 @@
                     <extension>true</extension>
                     <schemaFiles>validation-configuration-1.1.xsd,validation-mapping-1.1.xsd</schemaFiles>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>javax.xml.bind</groupId>
-                        <artifactId>jaxb-api</artifactId>
-                        <version>2.2.5</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-impl</artifactId>
-                        <version>2.1.13</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.bsc.maven</groupId>

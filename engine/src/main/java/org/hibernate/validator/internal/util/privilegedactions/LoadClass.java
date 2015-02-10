@@ -8,6 +8,7 @@ package org.hibernate.validator.internal.util.privilegedactions;
 
 import java.security.PrivilegedAction;
 
+import org.hibernate.validator.HibernateValidator;
 import org.hibernate.validator.internal.util.logging.Log;
 import org.hibernate.validator.internal.util.logging.LoggerFactory;
 
@@ -24,17 +25,18 @@ public final class LoadClass implements PrivilegedAction<Class<?>> {
 
 	private final String className;
 
-	private final Class<?> caller;
+	private final ClassLoader classLoader;
 
-	public static LoadClass action(String className, Class<?> caller) {
-		return new LoadClass( className, caller );
+	public static LoadClass action(String className, ClassLoader classLoader) {
+		return new LoadClass( className, classLoader );
 	}
 
-	private LoadClass(String className, Class<?> caller) {
+	private LoadClass(String className, ClassLoader classLoader) {
 		this.className = className;
-		this.caller = caller;
+		this.classLoader = classLoader;
 	}
 
+	@Override
 	public Class<?> run() {
 		if ( className.startsWith( HIBERNATE_VALIDATOR_CLASS_NAME ) ) {
 			return loadClassInValidatorNameSpace();
@@ -48,7 +50,7 @@ public final class LoadClass implements PrivilegedAction<Class<?>> {
 
 	private Class<?> loadClassInValidatorNameSpace() {
 		try {
-			return Class.forName( className, true, caller.getClassLoader() );
+			return Class.forName( className, true, HibernateValidator.class.getClassLoader() );
 		}
 		catch ( ClassNotFoundException e ) {
 			//ignore -- try using the class loader of context first
@@ -72,6 +74,17 @@ public final class LoadClass implements PrivilegedAction<Class<?>> {
 
 	private Class<?> loadNonValidatorClass() {
 		try {
+			if ( classLoader != null ) {
+				return Class.forName( className, false, classLoader );
+			}
+		}
+		catch ( ClassNotFoundException e ) {
+			// ignore - try using the classloader of the caller first
+		}
+		catch ( RuntimeException e ) {
+			// ignore
+		}
+		try {
 			ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 			if ( contextClassLoader != null ) {
 				return Class.forName( className, false, contextClassLoader );
@@ -84,7 +97,7 @@ public final class LoadClass implements PrivilegedAction<Class<?>> {
 			// ignore
 		}
 		try {
-			return Class.forName( className, true, caller.getClassLoader() );
+			return Class.forName( className, true, classLoader );
 		}
 		catch ( ClassNotFoundException e ) {
 			throw log.getUnableToLoadClassException( className, e );

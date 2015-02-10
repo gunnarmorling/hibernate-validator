@@ -34,7 +34,7 @@ final class ResourceLoaderHelper {
 	 *
 	 * @see InputStream#markSupported()
 	 */
-	static InputStream getResettableInputStreamForPath(String path) {
+	static InputStream getResettableInputStreamForPath(String path, ClassLoader userClassLoader) {
 		//TODO not sure if it's the right thing to removing '/'
 		String inputPath = path;
 		if ( inputPath.startsWith( "/" ) ) {
@@ -43,7 +43,10 @@ final class ResourceLoaderHelper {
 
 		boolean isContextCL = true;
 		// try the context class loader first
-		ClassLoader loader = run( GetClassLoader.fromContext() );
+
+		// TODO preference
+
+		ClassLoader loader = userClassLoader != null ? userClassLoader : run( GetClassLoader.fromContext() );
 
 		if ( loader == null ) {
 			log.debug( "No default context class loader, fall back to Bean Validation's loader" );

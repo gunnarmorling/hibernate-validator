@@ -1,0 +1,5 @@
+java \
+    -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000 \
+    -addmods java.xml.bind \
+    -cp target/test-classes:/Users/gunnar/.m2/repository/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar:/Users/gunnar/.m2/repository/org/hibernate/hibernate-validator/5.3.0-SNAPSHOT/hibernate-validator-5.3.0-SNAPSHOT.jar:../../module-test/lib-test/testng.jar:../../module-test/lib-test/festassert.jar:../../module-test/lib/jodatime.jar:../../module-test/lib/hibernatejpa.jar:../../module-test/lib-test/easymock.jar:../../module-test/lib-test/log4j.jar:../../module-test/lib/classmate.jar:../../module-test/lib/paranamer.jar:../../module-test/lib/jbosslogging.jar:../../module-test/lib/javaxelapi.jar:../../module-test/lib-test/jcommander.jar:../../module-test/lib-test/festutil.jar:../../module-test/lib-test/jsoup.jar:../../module-test/lib-test/javaxel.jar:../../module-test/lib-test/groovyjsr223.jar:../../module-test/lib-test/groovy.jar:../test-utils/target/hibernate-validator-test-utils-5.3.0-SNAPSHOT.jar \
+    org.hibernate.validator.testutil2.TestRunner

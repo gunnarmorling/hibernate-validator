@@ -25,7 +25,6 @@ import org.hibernate.validator.spi.resourceloading.ResourceBundleLocator;
 import org.jboss.logging.Logger;
 
 import static org.hibernate.validator.internal.util.CollectionHelper.newHashSet;
-import static org.hibernate.validator.internal.util.logging.Messages.MESSAGES;
 
 /**
  * A resource bundle locator, that loads resource bundles by invoking {@code ResourceBundle.loadBundle(String, Local, ClassLoader)}.
@@ -173,15 +172,16 @@ public class PlatformResourceBundleLocator implements ResourceBundleLocator {
 	 * @see <a href="https://hibernate.atlassian.net/browse/HV-1023">HV-1023</a>
 	 */
 	private static boolean determineAvailabilityOfResourceBundleControl() {
-		try {
-			@SuppressWarnings("unused")
-			ResourceBundle.Control dummyControl = AggregateResourceBundle.CONTROL;
-			return true;
-		}
-		catch ( NoClassDefFoundError e ) {
-			log.info( MESSAGES.unableToUseResourceBundleAggregation() );
-			return false;
-		}
+		return false;
+//		try {
+//			@SuppressWarnings("unused")
+//			ResourceBundle.Control dummyControl = AggregateResourceBundle.CONTROL;
+//			return true;
+//		}
+//		catch ( NoClassDefFoundError e ) {
+//			log.info( MESSAGES.unableToUseResourceBundleAggregation() );
+//			return false;
+//		}
 	}
 
 	/**

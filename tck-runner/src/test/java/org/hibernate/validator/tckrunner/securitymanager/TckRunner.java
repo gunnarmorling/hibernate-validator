@@ -9,10 +9,12 @@ package org.hibernate.validator.tckrunner.securitymanager;
 import java.util.Collections;
 import java.util.List;
 
+import org.hibernate.beanvalidation.tck.tests.constraints.groups.groupsequenceisolation.GroupSequenceIsolationTest;
 import org.hibernate.beanvalidation.tck.util.IntegrationTestsMethodSelector;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 import org.testng.TestNG;
+import org.testng.xml.XmlClass;
 import org.testng.xml.XmlMethodSelector;
 import org.testng.xml.XmlPackage;
 import org.testng.xml.XmlSuite;
@@ -44,11 +46,11 @@ public class TckRunner {
 		test.setName( "JSR-380-TCK" );
 
 		List<XmlPackage> packages = Collections.singletonList( new XmlPackage( "org.hibernate.beanvalidation.tck.tests" ) );
-		test.setXmlPackages( packages );
+//		test.setXmlPackages( packages );
 
 		// Alternatively e.g. use this for running single tests
-		// List<XmlClass> classes = Collections.singletonList( new XmlClass( ValidateTest.class ) );
-		// test.setXmlClasses( classes );
+		 List<XmlClass> classes = Collections.singletonList( new XmlClass( GroupSequenceIsolationTest.class ) );
+		 test.setXmlClasses( classes );
 
 		XmlMethodSelector selector = new XmlMethodSelector();
 		selector.setClassName( IntegrationTestsMethodSelector.class.getName() );

@@ -18,6 +18,7 @@ import javax.validation.ElementKind;
 import javax.validation.metadata.GroupConversionDescriptor;
 import javax.validation.metadata.ReturnValueDescriptor;
 
+import org.hibernate.validator.internal.engine.stream.ConstraintsStream;
 import org.hibernate.validator.internal.engine.valuehandling.UnwrapMode;
 import org.hibernate.validator.internal.metadata.core.MetaConstraint;
 import org.hibernate.validator.internal.metadata.descriptor.ReturnValueDescriptorImpl;
@@ -63,6 +64,11 @@ public class ReturnValueMetaData extends AbstractConstraintMetaData
 		this.cascadables = Collections.unmodifiableList( isCascading ? Arrays.<Cascadable>asList( this ) : Collections.<Cascadable>emptyList() );
 		this.groupConversionHelper = new GroupConversionHelper( groupConversions );
 		this.groupConversionHelper.validateGroupConversions( isCascading(), this.toString() );
+	}
+
+	@Override
+	public ConstraintsStream getConstraintsToValidate(Object state, boolean validatingDefaultGroupSequence) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

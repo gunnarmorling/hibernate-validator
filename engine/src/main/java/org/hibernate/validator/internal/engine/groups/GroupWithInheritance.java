@@ -17,6 +17,8 @@ import java.util.Set;
  */
 public class GroupWithInheritance implements Iterable<Group> {
 
+	public static final GroupWithInheritance DEFAULT = new GroupWithInheritance( Collections.singleton( Group.DEFAULT_GROUP ) );
+
 	private final Set<Group> groups;
 
 	public GroupWithInheritance(Set<Group> groups) {

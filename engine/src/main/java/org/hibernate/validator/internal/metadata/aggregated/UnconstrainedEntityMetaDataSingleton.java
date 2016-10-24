@@ -14,6 +14,7 @@ import javax.validation.ConstraintDeclarationException;
 import javax.validation.metadata.BeanDescriptor;
 
 import org.hibernate.validator.internal.engine.groups.Sequence;
+import org.hibernate.validator.internal.engine.stream.ConstraintsStream;
 import org.hibernate.validator.internal.metadata.core.MetaConstraint;
 import org.hibernate.validator.internal.metadata.facets.Cascadable;
 import org.hibernate.validator.internal.metadata.raw.ExecutableElement;
@@ -93,4 +94,9 @@ public final class UnconstrainedEntityMetaDataSingleton<T> implements BeanMetaDa
 	public Iterable<Cascadable> getCascadables() {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public ConstraintsStream getConstraintsToValidate(Object state, boolean validatingDefaultGroupSequence) {
+		throw new UnsupportedOperationException();
+	};
 }

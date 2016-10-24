@@ -6,6 +6,10 @@
  */
 package org.hibernate.validator.internal.metadata.aggregated;
 
+import static org.hibernate.validator.internal.util.CollectionHelper.newHashMap;
+import static org.hibernate.validator.internal.util.CollectionHelper.newHashSet;
+import static org.hibernate.validator.internal.util.CollectionHelper.partition;
+
 import java.lang.annotation.ElementType;
 import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
@@ -28,6 +32,10 @@ import org.hibernate.validator.internal.engine.MethodValidationConfiguration;
 import org.hibernate.validator.internal.engine.groups.Sequence;
 import org.hibernate.validator.internal.engine.groups.ValidationOrder;
 import org.hibernate.validator.internal.engine.groups.ValidationOrderGenerator;
+import org.hibernate.validator.internal.engine.stream.AllConstraintsStream;
+import org.hibernate.validator.internal.engine.stream.ConstraintsStream;
+import org.hibernate.validator.internal.engine.stream.DefaultGroupValidationConstraintStream;
+import org.hibernate.validator.internal.metadata.BeanMetaDataManager;
 import org.hibernate.validator.internal.metadata.core.ConstraintHelper;
 import org.hibernate.validator.internal.metadata.core.MetaConstraint;
 import org.hibernate.validator.internal.metadata.descriptor.BeanDescriptorImpl;
@@ -50,10 +58,6 @@ import org.hibernate.validator.internal.util.logging.Log;
 import org.hibernate.validator.internal.util.logging.LoggerFactory;
 import org.hibernate.validator.spi.group.DefaultGroupSequenceProvider;
 
-import static org.hibernate.validator.internal.util.CollectionHelper.newHashMap;
-import static org.hibernate.validator.internal.util.CollectionHelper.newHashSet;
-import static org.hibernate.validator.internal.util.CollectionHelper.partition;
-
 /**
  * This class encapsulates all meta data needed for validation. Implementations of {@code Validator} interface can
  * instantiate an instance of this class and delegate the metadata extraction to it.
@@ -71,6 +75,8 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 	 * Represents the "sequence" of just Default.class.
 	 */
 	private static final List<Class<?>> DEFAULT_GROUP_SEQUENCE = Collections.<Class<?>>singletonList( Default.class );
+
+	private final BeanMetaDataManager beanMetaDataManager;
 
 	private final ValidationOrderGenerator validationOrderGenerator;
 
@@ -144,12 +150,14 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 	 * @param defaultGroupSequenceProvider The default group sequence provider if set.
 	 * @param constraintMetaDataSet All constraint meta data relating to the represented type.
 	 */
-	public BeanMetaDataImpl(Class<T> beanClass,
+	public BeanMetaDataImpl(BeanMetaDataManager beanMetaDataManager,
+							Class<T> beanClass,
 							List<Class<?>> defaultGroupSequence,
 							DefaultGroupSequenceProvider<? super T> defaultGroupSequenceProvider,
 							Set<ConstraintMetaData> constraintMetaDataSet,
 							ValidationOrderGenerator validationOrderGenerator) {
 
+		this.beanMetaDataManager = beanMetaDataManager;
 		this.validationOrderGenerator = validationOrderGenerator;
 		this.beanClass = beanClass;
 		this.propertyMetaDataMap = newHashMap();
@@ -250,6 +258,19 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 	@Override
 	public BeanDescriptor getBeanDescriptor() {
 		return beanDescriptor;
+	}
+
+	@Override
+	public ConstraintsStream getConstraintsToValidate(Object state, boolean validatingDefaultGroupSequence) {
+		// we are not validating the default group there is nothing special to consider. If we are validating the default
+		// group sequence we have to consider that a class in the hierarchy could redefine the default group sequence.
+
+		if ( validatingDefaultGroupSequence ) {
+			return new DefaultGroupValidationConstraintStream<>( beanMetaDataManager, beanClass, (T)state );
+		}
+		else {
+			return new AllConstraintsStream( this );
+		}
 	}
 
 	@Override
@@ -389,7 +410,7 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 			throw log.getInvalidDefaultGroupSequenceDefinitionException();
 		}
 
-		DefaultGroupSequenceContext<T> context = new DefaultGroupSequenceContext<T>();
+		DefaultGroupSequenceContext<T> context = new DefaultGroupSequenceContext<>();
 
 		if ( defaultGroupSequenceProvider != null ) {
 			context.defaultGroupSequenceProvider = defaultGroupSequenceProvider;
@@ -452,7 +473,7 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 	}
 
 	private static List<Class<?>> getValidDefaultGroupSequence(Class<?> beanClass, List<Class<?>> groupSequence) {
-		List<Class<?>> validDefaultGroupSequence = new ArrayList<Class<?>>();
+		List<Class<?>> validDefaultGroupSequence = new ArrayList<>();
 
 		boolean groupSequenceContainsDefault = false;
 		if ( groupSequence != null ) {
@@ -507,6 +528,8 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 
 	public static class BeanMetaDataBuilder<T> {
 
+		private final BeanMetaDataManager beanMetaDataManager;
+
 		private final ConstraintHelper constraintHelper;
 
 		private final ValidationOrderGenerator validationOrderGenerator;
@@ -528,11 +551,13 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 		private final MethodValidationConfiguration methodValidationConfiguration;
 
 		private BeanMetaDataBuilder(
+				BeanMetaDataManager beanMetaDataManager,
 				ConstraintHelper constraintHelper,
 				ExecutableHelper executableHelper,
 				ValidationOrderGenerator validationOrderGenerator,
 				Class<T> beanClass,
 				MethodValidationConfiguration methodValidationConfiguration) {
+			this.beanMetaDataManager = beanMetaDataManager;
 			this.beanClass = beanClass;
 			this.constraintHelper = constraintHelper;
 			this.validationOrderGenerator = validationOrderGenerator;
@@ -541,12 +566,14 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 		}
 
 		public static <T> BeanMetaDataBuilder<T> getInstance(
+				BeanMetaDataManager beanMetaDataManager,
 				ConstraintHelper constraintHelper,
 				ExecutableHelper executableHelper,
 				ValidationOrderGenerator validationOrderGenerator,
 				Class<T> beanClass,
 				MethodValidationConfiguration methodValidationConfiguration) {
-			return new BeanMetaDataBuilder<T>(
+			return new BeanMetaDataBuilder<>(
+					beanMetaDataManager,
 					constraintHelper,
 					executableHelper,
 					validationOrderGenerator,
@@ -605,7 +632,8 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 				aggregatedElements.addAll( builder.build() );
 			}
 
-			return new BeanMetaDataImpl<T>(
+			return new BeanMetaDataImpl<>(
+					beanMetaDataManager,
 					beanClass,
 					defaultGroupSequence,
 					defaultGroupSequenceProvider,

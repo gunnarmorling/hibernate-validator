@@ -6,6 +6,7 @@
  */
 package org.hibernate.validator.internal.metadata.aggregated;
 
+import org.hibernate.validator.internal.engine.stream.ConstraintsStream;
 import org.hibernate.validator.internal.metadata.facets.Cascadable;
 import org.hibernate.validator.internal.metadata.facets.Validatable;
 import org.hibernate.validator.internal.util.CollectionHelper;
@@ -22,6 +23,11 @@ public class ValidatableParametersMetaData implements Validatable {
 
 	public ValidatableParametersMetaData(Iterable<? extends Cascadable> cascadables) {
 		this.cascadables = CollectionHelper.<Cascadable>newHashSet( cascadables );
+	}
+
+	@Override
+	public ConstraintsStream getConstraintsToValidate(Object state, boolean validatingDefaultGroupSequence) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

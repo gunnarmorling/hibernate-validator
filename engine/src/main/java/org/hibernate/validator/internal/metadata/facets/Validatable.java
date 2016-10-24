@@ -6,6 +6,8 @@
  */
 package org.hibernate.validator.internal.metadata.facets;
 
+import org.hibernate.validator.internal.engine.stream.ConstraintsStream;
+
 /**
  * Provides a unified view on validatable elements of all kinds, be it Java
  * beans, the arguments passed to a method or the value returned from a method.
@@ -14,6 +16,8 @@ package org.hibernate.validator.internal.metadata.facets;
  * @author Gunnar Morling
  */
 public interface Validatable {
+
+	ConstraintsStream getConstraintsToValidate(Object state, boolean validatingDefaultGroupSequence);
 
 	/**
 	 * Returns the cascaded elements of this validatable, e.g. the properties of

@@ -27,6 +27,7 @@ import org.hibernate.validator.internal.metadata.BeanMetaDataManager;
 import org.hibernate.validator.internal.metadata.core.ConstraintHelper;
 import org.hibernate.validator.internal.metadata.aggregated.MethodMetaData;
 import org.hibernate.validator.internal.metadata.raw.ConstrainedMethod;
+import org.hibernate.validator.internal.util.ExecutableHelper;
 import org.hibernate.validator.test.internal.metadata.Customer;
 import org.hibernate.validator.test.internal.metadata.CustomerRepository;
 
@@ -47,7 +48,7 @@ public class MethodMetaDataTest {
 	@BeforeMethod
 	public void setupBeanMetaData() {
 
-		beanMetaData = new BeanMetaDataManager( new ConstraintHelper() ).getBeanMetaData( CustomerRepository.class );
+		beanMetaData = new BeanMetaDataManager( new ConstraintHelper(), new ExecutableHelper() ).getBeanMetaData( CustomerRepository.class );
 	}
 
 	@Test

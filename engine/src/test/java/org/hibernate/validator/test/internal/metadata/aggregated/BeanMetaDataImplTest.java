@@ -26,6 +26,7 @@ import org.hibernate.validator.internal.metadata.aggregated.BeanMetaData;
 import org.hibernate.validator.internal.metadata.BeanMetaDataManager;
 import org.hibernate.validator.internal.metadata.aggregated.MethodMetaData;
 import org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl;
+import org.hibernate.validator.internal.util.ExecutableHelper;
 import org.hibernate.validator.internal.metadata.core.ConstraintHelper;
 import org.hibernate.validator.test.internal.engine.methodlevel.service.CustomerRepository;
 import org.hibernate.validator.test.internal.engine.methodlevel.service.CustomerRepositoryImpl;
@@ -95,7 +96,7 @@ public class BeanMetaDataImplTest {
 	}
 
 	private <T> BeanMetaData<T> setupBeanMetaData(Class<T> clazz) {
-		return new BeanMetaDataManager( new ConstraintHelper() ).getBeanMetaData( clazz );
+		return new BeanMetaDataManager( new ConstraintHelper(), new ExecutableHelper() ).getBeanMetaData( clazz );
 	}
 
 }

@@ -28,6 +28,7 @@ import org.hibernate.validator.internal.metadata.core.ConstraintHelper;
 import org.hibernate.validator.internal.metadata.aggregated.MethodMetaData;
 import org.hibernate.validator.internal.metadata.aggregated.ParameterMetaData;
 import org.hibernate.validator.internal.metadata.raw.ConstrainedParameter;
+import org.hibernate.validator.internal.util.ExecutableHelper;
 import org.hibernate.validator.test.internal.metadata.Customer;
 import org.hibernate.validator.test.internal.metadata.CustomerRepository;
 
@@ -48,7 +49,7 @@ public class ParameterMetaDataTest {
 	@BeforeMethod
 	public void setupBeanMetaData() {
 
-		beanMetaData = new BeanMetaDataManager( new ConstraintHelper() ).getBeanMetaData( CustomerRepository.class );
+		beanMetaData = new BeanMetaDataManager( new ConstraintHelper(), new ExecutableHelper() ).getBeanMetaData( CustomerRepository.class );
 	}
 
 	@Test

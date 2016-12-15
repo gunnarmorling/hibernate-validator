@@ -31,6 +31,7 @@ import org.hibernate.validator.internal.metadata.provider.MetaDataProvider;
 import org.hibernate.validator.internal.metadata.raw.BeanConfiguration;
 import org.hibernate.validator.internal.util.ConcurrentReferenceHashMap;
 import org.hibernate.validator.internal.util.Contracts;
+import org.hibernate.validator.internal.util.ExecutableHelper;
 
 import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
 import static org.hibernate.validator.internal.util.ConcurrentReferenceHashMap.Option.IDENTITY_COMPARISONS;
@@ -81,23 +82,31 @@ public class BeanMetaDataManager {
 	private final ConstraintHelper constraintHelper;
 
 	/**
+	 * Helper for dealing with overriding executables.
+	 */
+	private final ExecutableHelper executableHelper;
+
+	/**
 	 * Used to cache the constraint meta data for validated entities
 	 */
 	private final ConcurrentReferenceHashMap<Class<?>, BeanMetaData<?>> beanMetaDataCache;
 
-	public BeanMetaDataManager(ConstraintHelper constraintHelper, MetaDataProvider... metaDataProviders) {
-		this( constraintHelper, Arrays.asList( metaDataProviders ) );
+	public BeanMetaDataManager(ConstraintHelper constraintHelper, ExecutableHelper executableHelper, MetaDataProvider... metaDataProviders) {
+		this( constraintHelper, executableHelper, Arrays.asList( metaDataProviders ) );
 	}
 
 	private final ValidationOrderGenerator validationOrderGenerator = new ValidationOrderGenerator();
 
 	/**
 	 * @param constraintHelper the constraint helper
+	 * @param executableHelper the executable helper
 	 * @param optionalMetaDataProviders optional meta data provider used on top of the annotation based provider
 	 */
 	public BeanMetaDataManager(ConstraintHelper constraintHelper,
+							   ExecutableHelper executableHelper,
 							   List<MetaDataProvider> optionalMetaDataProviders) {
 		this.constraintHelper = constraintHelper;
+		this.executableHelper = executableHelper;
 		this.metaDataProviders = newArrayList();
 		this.metaDataProviders.addAll( optionalMetaDataProviders );
 
@@ -156,7 +165,7 @@ public class BeanMetaDataManager {
 	 * @return A bean meta data object for the given type.
 	 */
 	private <T> BeanMetaDataImpl<T> createBeanMetaData(Class<T> clazz) {
-		BeanMetaDataBuilder<T> builder = BeanMetaDataBuilder.getInstance( constraintHelper, validationOrderGenerator, clazz );
+		BeanMetaDataBuilder<T> builder = BeanMetaDataBuilder.getInstance( constraintHelper, executableHelper, validationOrderGenerator, clazz );
 
 		for ( MetaDataProvider provider : metaDataProviders ) {
 			for ( BeanConfiguration<? super T> beanConfiguration : provider.getBeanConfigurationForHierarchy( clazz ) ) {

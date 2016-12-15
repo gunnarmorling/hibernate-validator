@@ -26,6 +26,7 @@ import org.testng.annotations.Test;
 import org.hibernate.validator.internal.metadata.BeanMetaDataManager;
 import org.hibernate.validator.internal.metadata.aggregated.BeanMetaData;
 import org.hibernate.validator.internal.metadata.core.ConstraintHelper;
+import org.hibernate.validator.internal.util.ExecutableHelper;
 import org.hibernate.validator.internal.util.logging.Log;
 import org.hibernate.validator.internal.util.logging.LoggerFactory;
 
@@ -42,7 +43,7 @@ public class BeanMetaDataManagerTest {
 
 	@Test(enabled = false, description = "Disabled as it shows false failures too often. Run on demand if required")
 	public void testBeanMetaDataCanBeGarbageCollected() throws Exception {
-		BeanMetaDataManager metaDataManager = new BeanMetaDataManager( new ConstraintHelper() );
+		BeanMetaDataManager metaDataManager = new BeanMetaDataManager( new ConstraintHelper(), new ExecutableHelper() );
 
 		Class<?> lastIterationsBean = null;
 		int totalCreatedMetaDataInstances = 0;

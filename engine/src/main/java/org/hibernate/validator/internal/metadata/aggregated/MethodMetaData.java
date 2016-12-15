@@ -31,7 +31,7 @@ import org.hibernate.validator.internal.metadata.raw.ConstrainedElement;
 import org.hibernate.validator.internal.metadata.raw.ConstrainedElement.ConstrainedElementKind;
 import org.hibernate.validator.internal.metadata.raw.ConstrainedMethod;
 import org.hibernate.validator.internal.metadata.raw.ConstrainedParameter;
-import org.hibernate.validator.internal.util.ReflectionHelper;
+import org.hibernate.validator.internal.util.ExecutableHelper;
 import org.hibernate.validator.internal.util.logging.Log;
 import org.hibernate.validator.internal.util.logging.LoggerFactory;
 import org.hibernate.validator.method.metadata.MethodDescriptor;
@@ -105,8 +105,9 @@ public class MethodMetaData extends AbstractConstraintMetaData {
 	 * @author Kevin Pollet <kevin.pollet@serli.com> (C) 2011 SERLI
 	 */
 	public static class Builder extends MetaDataBuilder {
-		private Set<ConstrainedMethod> constrainedMethods = newHashSet();
-		private MethodConstraintLocation location;
+		private final ExecutableHelper executableHelper;
+		private final Set<ConstrainedMethod> constrainedMethods = newHashSet();
+		private final MethodConstraintLocation location;
 		private final Set<MetaConstraint<?>> returnValueConstraints = newHashSet();
 		private boolean isCascading = false;
 		private boolean isConstrained = false;
@@ -117,10 +118,12 @@ public class MethodMetaData extends AbstractConstraintMetaData {
 		 * @param constrainedMethod The base method for this builder. This is the lowest
 		 * method with a given signature within a type hierarchy.
 		 * @param constraintHelper the constraint helper
+		 * @param executableHelper the executable helper
 		 */
-		public Builder(ConstrainedMethod constrainedMethod, ConstraintHelper constraintHelper) {
+		public Builder(ConstrainedMethod constrainedMethod, ConstraintHelper constraintHelper, ExecutableHelper executableHelper) {
 			super( constraintHelper );
 
+			this.executableHelper = executableHelper;
 			location = constrainedMethod.getLocation();
 			add( constrainedMethod );
 		}
@@ -129,11 +132,15 @@ public class MethodMetaData extends AbstractConstraintMetaData {
 		 * {@inheritDoc}
 		 */
 		public boolean accepts(ConstrainedElement constrainedElement) {
-			return constrainedElement.getKind() == ConstrainedElementKind.METHOD &&
-					ReflectionHelper.haveSameSignature(
-							location.getMember(),
-							( (ConstrainedMethod) constrainedElement ).getLocation().getMember()
-					);
+			if ( constrainedElement.getKind() != ConstrainedElementKind.METHOD ) {
+				return false;
+			}
+
+			Method method = ( (ConstrainedMethod) constrainedElement ).getLocation().getMember();
+
+			//does one of the executables override the other one?
+			return executableHelper.overrides( location.getMember(), method )
+					|| executableHelper.overrides( method, location.getMember() );
 		}
 
 		/**

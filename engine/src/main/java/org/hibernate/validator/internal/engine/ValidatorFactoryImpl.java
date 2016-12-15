@@ -32,6 +32,7 @@ import org.hibernate.validator.internal.metadata.core.ConstraintHelper;
 import org.hibernate.validator.internal.metadata.provider.MetaDataProvider;
 import org.hibernate.validator.internal.metadata.provider.ProgrammaticMetaDataProvider;
 import org.hibernate.validator.internal.metadata.provider.XmlMetaDataProvider;
+import org.hibernate.validator.internal.util.ExecutableHelper;
 import org.hibernate.validator.internal.util.logging.Log;
 import org.hibernate.validator.internal.util.logging.LoggerFactory;
 
@@ -61,6 +62,7 @@ public class ValidatorFactoryImpl implements HibernateValidatorFactory {
 		this.constraintValidatorFactory = configurationState.getConstraintValidatorFactory();
 		this.traversableResolver = configurationState.getTraversableResolver();
 		ConstraintHelper constraintHelper = new ConstraintHelper();
+		ExecutableHelper executableHelper= new ExecutableHelper();
 
 		List<MetaDataProvider> metaDataProviders = newArrayList();
 
@@ -94,7 +96,7 @@ public class ValidatorFactoryImpl implements HibernateValidatorFactory {
 				properties, tmpFailFast
 		);
 		this.failFast = tmpFailFast;
-		metaDataManager = new BeanMetaDataManager( constraintHelper, metaDataProviders );
+		metaDataManager = new BeanMetaDataManager( constraintHelper, executableHelper, metaDataProviders );
 	}
 
 	public Validator getValidator() {

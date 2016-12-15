@@ -49,6 +49,7 @@ import org.hibernate.validator.internal.metadata.raw.ConstrainedField;
 import org.hibernate.validator.internal.metadata.raw.ConstrainedMethod;
 import org.hibernate.validator.internal.metadata.raw.ConstrainedType;
 import org.hibernate.validator.internal.util.CollectionHelper.Partitioner;
+import org.hibernate.validator.internal.util.ExecutableHelper;
 import org.hibernate.validator.internal.util.ReflectionHelper;
 import org.hibernate.validator.internal.util.logging.Log;
 import org.hibernate.validator.internal.util.logging.LoggerFactory;
@@ -470,6 +471,8 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 
 		private final ConstraintHelper constraintHelper;
 
+		private final ExecutableHelper executableHelper;
+
 		private final ValidationOrderGenerator validationOrderGenerator;
 
 		private final Class<T> beanClass;
@@ -484,14 +487,15 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 
 		private DefaultGroupSequenceProvider<? super T> defaultGroupSequenceProvider;
 
-		private BeanMetaDataBuilder(ConstraintHelper constraintHelper, ValidationOrderGenerator validationOrderGenerator, Class<T> beanClass) {
+		private BeanMetaDataBuilder(ConstraintHelper constraintHelper, ExecutableHelper executableHelper, ValidationOrderGenerator validationOrderGenerator, Class<T> beanClass) {
 			this.beanClass = beanClass;
 			this.constraintHelper = constraintHelper;
+			this.executableHelper = executableHelper;
 			this.validationOrderGenerator = validationOrderGenerator;
 		}
 
-		public static <T> BeanMetaDataBuilder<T> getInstance(ConstraintHelper constraintHelper, ValidationOrderGenerator validationOrderGenerator, Class<T> beanClass) {
-			return new BeanMetaDataBuilder<T>( constraintHelper, validationOrderGenerator, beanClass );
+		public static <T> BeanMetaDataBuilder<T> getInstance(ConstraintHelper constraintHelper, ExecutableHelper executableHelper, ValidationOrderGenerator validationOrderGenerator, Class<T> beanClass) {
+			return new BeanMetaDataBuilder<T>( constraintHelper, executableHelper, validationOrderGenerator, beanClass );
 		}
 
 		public void add(BeanConfiguration<? super T> configuration) {
@@ -531,7 +535,8 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 			builders.add(
 					new BuilderDelegate(
 							constrainableElement,
-							constraintHelper
+							constraintHelper,
+							executableHelper
 					)
 			);
 		}
@@ -561,11 +566,13 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 
 	private static class BuilderDelegate {
 		private final ConstraintHelper constraintHelper;
+		private final ExecutableHelper executableHelper;
 		private MetaDataBuilder propertyBuilder;
 		private MethodMetaData.Builder methodBuilder;
 
-		public BuilderDelegate(ConstrainedElement constrainedElement, ConstraintHelper constraintHelper) {
+		public BuilderDelegate(ConstrainedElement constrainedElement, ConstraintHelper constraintHelper, ExecutableHelper executableHelper) {
 			this.constraintHelper = constraintHelper;
+			this.executableHelper =  executableHelper;
 
 			switch ( constrainedElement.getKind() ) {
 				case FIELD:
@@ -579,7 +586,8 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 					ConstrainedMethod constrainedMethod = (ConstrainedMethod) constrainedElement;
 					methodBuilder = new MethodMetaData.Builder(
 							constrainedMethod,
-							constraintHelper
+							constraintHelper,
+							executableHelper
 					);
 
 					if ( constrainedMethod.isGetterMethod() ) {
@@ -614,7 +622,8 @@ public final class BeanMetaDataImpl<T> implements BeanMetaData<T> {
 					ConstrainedMethod constrainedMethod = (ConstrainedMethod) constrainedElement;
 					methodBuilder = new MethodMetaData.Builder(
 							constrainedMethod,
-							constraintHelper
+							constraintHelper,
+							executableHelper
 					);
 				}
 

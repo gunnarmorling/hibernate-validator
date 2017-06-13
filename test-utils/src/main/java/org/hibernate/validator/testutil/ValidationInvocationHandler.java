@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -36,7 +37,7 @@ public class ValidationInvocationHandler implements InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		Set<ConstraintViolation<Object>> constraintViolations = validator.forExecutables().validateParameters(
-				wrapped,
+				proxy,
 				method,
 				args == null ? new Object[] { } : args,
 				groups
@@ -48,7 +49,7 @@ public class ValidationInvocationHandler implements InvocationHandler {
 
 		Object result = method.invoke( wrapped, args );
 
-		constraintViolations = validator.forExecutables().validateReturnValue( wrapped, method, result, groups );
+		constraintViolations = validator.forExecutables().validateReturnValue( proxy, method, result, groups );
 
 		if ( !constraintViolations.isEmpty() ) {
 			throw new ConstraintViolationException( new HashSet<ConstraintViolation<?>>( constraintViolations ) );

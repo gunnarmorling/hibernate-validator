@@ -9,7 +9,6 @@ package org.hibernate.validator.testutils;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
 import java.util.Locale;
 
 import javax.validation.Configuration;
@@ -30,6 +29,10 @@ import org.hibernate.validator.internal.engine.DefaultClockProvider;
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorContextImpl;
 import org.hibernate.validator.testutil.DummyTraversableResolver;
 import org.hibernate.validator.testutil.ValidationInvocationHandler;
+
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.implementation.InvocationHandlerAdapter;
+import net.bytebuddy.matcher.ElementMatchers;
 
 /**
  * A helper providing useful functions for setting up validators.
@@ -207,11 +210,19 @@ public final class ValidatorUtil {
 				implementor, executableValidator, validationGroups
 		);
 
-		return (T) Proxy.newProxyInstance(
-				implementor.getClass().getClassLoader(),
-				interfaces,
-				handler
-		);
+		try {
+			return (T) new ByteBuddy().subclass( implementor.getClass() )
+					.implement( interfaces )
+					.method(ElementMatchers.any())
+					.intercept(InvocationHandlerAdapter.of( handler) )
+					.make()
+					.load(implementor.getClass().getClassLoader() )
+					.getLoaded()
+					.newInstance();
+		}
+		catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException( e );
+		}
 	}
 
 	/**

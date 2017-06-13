@@ -258,9 +258,12 @@ public class ProgrammaticConstraintDefinitionsTest {
 		void setSource(String source);
 	}
 
-	private static class Bar implements Foo {
+	public static class Bar implements Foo {
 
 		private String source;
+
+		public Bar() {
+		}
 
 		public Bar(String source) {
 			this.source = source;

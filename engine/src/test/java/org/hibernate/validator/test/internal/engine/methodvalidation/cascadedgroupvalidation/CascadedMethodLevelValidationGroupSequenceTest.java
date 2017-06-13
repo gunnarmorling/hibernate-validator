@@ -49,7 +49,7 @@ public class CascadedMethodLevelValidationGroupSequenceTest {
 
 			ConstraintViolation<?> constraintViolation = e.getConstraintViolations().iterator().next();
 			assertConstraintViolation(
-					constraintViolation, NotNull.class, "may not be null", CompoundEntityRepositoryImpl.class, null
+					constraintViolation, NotNull.class, "may not be null", entityRepository.getClass(), null
 			);
 			assertEquals(
 					constraintViolation.getConstraintDescriptor().getGroups().iterator().next(), ValidationGroup1.class
@@ -73,7 +73,7 @@ public class CascadedMethodLevelValidationGroupSequenceTest {
 
 			ConstraintViolation<?> constraintViolation = e.getConstraintViolations().iterator().next();
 			assertConstraintViolation(
-					constraintViolation, NotNull.class, "may not be null", CompoundEntityRepositoryImpl.class, null
+					constraintViolation, NotNull.class, "may not be null", entityRepository.getClass(), null
 			);
 			assertEquals(
 					constraintViolation.getConstraintDescriptor().getGroups().iterator().next(), ValidationGroup2.class
@@ -98,7 +98,7 @@ public class CascadedMethodLevelValidationGroupSequenceTest {
 
 			ConstraintViolation<?> constraintViolation = e.getConstraintViolations().iterator().next();
 			assertConstraintViolation(
-					constraintViolation, NotNull.class, "may not be null", CompoundEntityRepositoryImpl.class, null
+					constraintViolation, NotNull.class, "may not be null", entityRepository.getClass(), null
 			);
 			assertEquals(
 					constraintViolation.getConstraintDescriptor().getGroups().iterator().next(), ValidationGroup1.class
@@ -120,7 +120,7 @@ public class CascadedMethodLevelValidationGroupSequenceTest {
 			assertEquals( e.getConstraintViolations().size(), 1 );
 			ConstraintViolation<?> constraintViolation = e.getConstraintViolations().iterator().next();
 			assertConstraintViolation(
-					constraintViolation, NotNull.class, "may not be null", CompoundEntityRepositoryImpl.class, null
+					constraintViolation, NotNull.class, "may not be null", entityRepository.getClass(), null
 			);
 			assertEquals(
 					constraintViolation.getConstraintDescriptor().getGroups().iterator().next(), ValidationGroup1.class
@@ -144,7 +144,7 @@ public class CascadedMethodLevelValidationGroupSequenceTest {
 
 			ConstraintViolation<?> constraintViolation = e.getConstraintViolations().iterator().next();
 			assertConstraintViolation(
-					constraintViolation, NotNull.class, "may not be null", CompoundEntityRepositoryImpl.class, null
+					constraintViolation, NotNull.class, "may not be null", entityRepository.getClass(), null
 			);
 			assertEquals(
 					constraintViolation.getConstraintDescriptor().getGroups().iterator().next(), ValidationGroup2.class
@@ -169,7 +169,7 @@ public class CascadedMethodLevelValidationGroupSequenceTest {
 
 			ConstraintViolation<?> constraintViolation = e.getConstraintViolations().iterator().next();
 			assertConstraintViolation(
-					constraintViolation, NotNull.class, "may not be null", CompoundEntityRepositoryImpl.class, null
+					constraintViolation, NotNull.class, "may not be null", entityRepository.getClass(), null
 			);
 			assertEquals(
 					constraintViolation.getConstraintDescriptor().getGroups().iterator().next(), ValidationGroup1.class

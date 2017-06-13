@@ -49,14 +49,12 @@ public interface CustomerRepositoryWithRedefinedDefaultGroup {
 	@NotNull(groups = ValidationGroup1.class)
 	String constraintInDefaultGroupAtReturnValue();
 
-	@List({
-			@Min(groups = ValidationGroup1.class, value = 5), @Min(groups = ValidationGroup2.class, value = 10)
-	})
+	@Min(groups = ValidationGroup1.class, value = 5)
+	@Min(groups = ValidationGroup2.class, value = 10)
 	int constraintsInAllPartOfDefaultSequence();
 
-	@List({
-			@Min(groups = ValidationGroup2.class, value = 5), @Min(groups = ValidationGroup3.class, value = 10)
-	})
+	@Min(groups = ValidationGroup2.class, value = 5)
+	@Min(groups = ValidationGroup3.class, value = 10)
 	int constraintsInAllPartsOfGroupSequence();
 
 

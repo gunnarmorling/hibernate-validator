@@ -6,10 +6,19 @@
  */
 package org.hibernate.validator.test.internal.engine.failfast;
 
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.hibernate.validator.testutil.ConstraintViolationAssert.assertCorrectConstraintViolationMessages;
+import static org.hibernate.validator.testutil.ConstraintViolationAssert.assertNumberOfViolations;
+import static org.hibernate.validator.testutils.ValidatorUtil.getValidatingProxy;
+import static org.testng.Assert.fail;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -25,8 +34,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import org.testng.annotations.Test;
-
 import org.hibernate.validator.HibernateValidator;
 import org.hibernate.validator.HibernateValidatorConfiguration;
 import org.hibernate.validator.HibernateValidatorFactory;
@@ -36,14 +43,7 @@ import org.hibernate.validator.internal.util.logging.Log;
 import org.hibernate.validator.internal.util.logging.LoggerFactory;
 import org.hibernate.validator.testutil.TestForIssue;
 import org.hibernate.validator.testutils.ValidatorUtil;
-
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.hibernate.validator.testutil.ConstraintViolationAssert.assertCorrectConstraintViolationMessages;
-import static org.hibernate.validator.testutil.ConstraintViolationAssert.assertNumberOfViolations;
-import static org.hibernate.validator.testutils.ValidatorUtil.getValidatingProxy;
-import static org.testng.Assert.fail;
+import org.testng.annotations.Test;
 
 /**
  * Tests for fail fast mode
@@ -302,7 +302,7 @@ public class FailFastTest {
 		String file;
 
 		@Valid
-		Set<B> bs = new HashSet<B>();
+		Set<B> bs = new HashSet<>();
 	}
 
 	class B {
@@ -316,7 +316,7 @@ public class FailFastTest {
 		void testMethod(@Min(2) @NotBlank String param1, @NotNull String param2);
 	}
 
-	class TestServiceImpl implements TestService {
+	public static class TestServiceImpl implements TestService {
 		@Override
 		public void testMethod(String param1, String param2) {
 		}

@@ -676,7 +676,7 @@ public class MethodConstraintMappingTest {
 				.method( "sayNothing", String.class )
 				.crossParameter()
 				.constraint(
-						new GenericConstraintDef<GenericAndCrossParameterConstraint>(
+						new GenericConstraintDef<>(
 								GenericAndCrossParameterConstraint.class
 						)
 				);
@@ -703,7 +703,7 @@ public class MethodConstraintMappingTest {
 	private interface TestGroup {
 	}
 
-	public class User {
+	public static class User {
 
 		@NotNull
 		private final String name;
@@ -717,7 +717,7 @@ public class MethodConstraintMappingTest {
 		}
 	}
 
-	public class Message {
+	public static class Message {
 
 		@NotNull
 		private final String message;
@@ -746,7 +746,7 @@ public class MethodConstraintMappingTest {
 
 	}
 
-	public class GreetingServiceImpl implements GreetingService {
+	public static class GreetingServiceImpl implements GreetingService {
 
 		@SuppressWarnings("unused")
 		private Message hello;

@@ -83,7 +83,7 @@ public class TypeAnnotationDefinedOnAGenericTypeArgumentTest {
 	@SuppressWarnings("unused")
 	private static class GenericArrayEntity<T> {
 
-		private T @Length(max = 5) [] array;
+		private final T @Length(max = 5) [] array;
 
 		private GenericArrayEntity(T[] array) {
 			this.array = array;
@@ -93,7 +93,7 @@ public class TypeAnnotationDefinedOnAGenericTypeArgumentTest {
 	@SuppressWarnings("unused")
 	private static class GenericArrayWithGetterEntity<T> {
 
-		private T[] arrayWithGetter;
+		private final T[] arrayWithGetter;
 
 		private GenericArrayWithGetterEntity(T[] array) {
 			this.arrayWithGetter = array;
@@ -107,7 +107,7 @@ public class TypeAnnotationDefinedOnAGenericTypeArgumentTest {
 	@SuppressWarnings("unused")
 	private static class GenericListEntity<T> {
 
-		private List<@Length(max = 5) T> list;
+		private final List<@Length(max = 5) T> list;
 
 		private GenericListEntity(List<T> list) {
 			this.list = list;
@@ -117,7 +117,7 @@ public class TypeAnnotationDefinedOnAGenericTypeArgumentTest {
 	@SuppressWarnings("unused")
 	private static class GenericListWithGetterEntity<T> {
 
-		private List<T> listWithGetter;
+		private final List<T> listWithGetter;
 
 		private GenericListWithGetterEntity(List<T> list) {
 			this.listWithGetter = list;
@@ -135,7 +135,7 @@ public class TypeAnnotationDefinedOnAGenericTypeArgumentTest {
 		<T> T[] test4(T[] array);
 	}
 
-	private static class FishTank implements IFishTank {
+	public static class FishTank implements IFishTank {
 
 		@Override
 		public <T> void test1(List<@Size(min = 5) T> fishNames) {

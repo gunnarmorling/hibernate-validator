@@ -65,7 +65,7 @@ public class MethodLevelValidationGroupSequenceTest {
 
 			ConstraintViolation<?> constraintViolation = e.getConstraintViolations().iterator().next();
 			assertConstraintViolation(
-					constraintViolation, NotNull.class, "may not be null", CustomerRepositoryWithRedefinedDefaultGroupImpl.class, null
+					constraintViolation, NotNull.class, "may not be null", customerRepository.getClass(), null
 			);
 			assertEquals(
 					constraintViolation.getConstraintDescriptor().getGroups().iterator().next(), ValidationGroup1.class
@@ -93,7 +93,7 @@ public class MethodLevelValidationGroupSequenceTest {
 					constraintViolation,
 					Min.class,
 					"must be greater than or equal to 5",
-					CustomerRepositoryWithRedefinedDefaultGroupImpl.class,
+					customerRepository.getClass(),
 					1
 			);
 			assertEquals(
@@ -145,7 +145,7 @@ public class MethodLevelValidationGroupSequenceTest {
 					constraintViolation,
 					Min.class,
 					"must be greater than or equal to 5",
-					CustomerRepositoryWithRedefinedDefaultGroupImpl.class,
+					customerRepository.getClass(),
 					1
 			);
 			assertEquals(
@@ -198,7 +198,7 @@ public class MethodLevelValidationGroupSequenceTest {
 
 			ConstraintViolation<?> constraintViolation = e.getConstraintViolations().iterator().next();
 			assertConstraintViolation(
-					constraintViolation, NotNull.class, "may not be null", CustomerRepositoryWithRedefinedDefaultGroupImpl.class, null
+					constraintViolation, NotNull.class, "may not be null", customerRepository.getClass(), null
 			);
 			assertEquals(
 					constraintViolation.getConstraintDescriptor().getGroups().iterator().next(), ValidationGroup1.class
@@ -226,7 +226,7 @@ public class MethodLevelValidationGroupSequenceTest {
 					constraintViolation,
 					Min.class,
 					"must be greater than or equal to 5",
-					CustomerRepositoryWithRedefinedDefaultGroupImpl.class,
+					customerRepository.getClass(),
 					1
 			);
 			assertEquals(
@@ -257,7 +257,7 @@ public class MethodLevelValidationGroupSequenceTest {
 					constraintViolation,
 					Min.class,
 					"must be greater than or equal to 5",
-					CustomerRepositoryWithRedefinedDefaultGroupImpl.class,
+					customerRepository.getClass(),
 					1
 			);
 			assertEquals(

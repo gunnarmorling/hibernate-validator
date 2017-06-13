@@ -6,6 +6,7 @@
  */
 package org.hibernate.validator.test.internal.engine.methodvalidation;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
@@ -17,7 +18,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.ElementKind;
 
 import org.hibernate.validator.test.internal.engine.methodvalidation.model.Customer;
-import org.hibernate.validator.test.internal.engine.methodvalidation.service.CustomerRepositoryImpl;
 import org.hibernate.validator.testutils.ValidatorUtil;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -61,8 +61,7 @@ public class AnnotationBasedMethodValidationTest extends AbstractMethodValidatio
 					constraintViolation.getPropertyPath().toString(),
 					"iterableParameterWithCascadingTypeParameter.customer[1].name"
 			);
-			assertEquals( constraintViolation.getRootBeanClass(), CustomerRepositoryImpl.class );
-			assertEquals( constraintViolation.getRootBean(), customerRepository );
+			assertThat( constraintViolation.getRootBean() ).isSameAs( customerRepository );
 			assertEquals( constraintViolation.getLeafBean(), customer );
 			assertEquals( constraintViolation.getInvalidValue(), null );
 			assertEquals( constraintViolation.getExecutableParameters(), new Object[] { customers } );

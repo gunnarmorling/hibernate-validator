@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.el</artifactId>
-            <scope>provided</scope>
+<!--             <scope>provided</scope> -->
         </dependency>
         <dependency>
             <groupId>org.jboss.logging</groupId>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging-annotations</artifactId>
-            <scope>provided</scope>
+<!--             <scope>provided</scope> -->
         </dependency>
 
         <!--
@@ -379,6 +379,90 @@
                                         <source>target/generated-sources/jaxb</source>
                                     </sources>
                                 </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.moditect</groupId>
+                        <artifactId>moditect-maven-plugin</artifactId>
+                        <version>1.0.0-SNAPSHOT</version>
+                        <executions>
+                            <execution>
+                                <id>add-module-info</id>
+                                <phase>package</phase>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                                    <module>
+                                        <moduleInfoSource>
+                                            module org.hibernate.validator.engine {
+                                                exports org.hibernate.validator;
+                                                exports org.hibernate.validator.cfg;
+                                                exports org.hibernate.validator.cfg.context;
+                                                exports org.hibernate.validator.cfg.defs;
+                                                exports org.hibernate.validator.cfg.defs.br;
+                                                exports org.hibernate.validator.cfg.defs.pl;
+                                                exports org.hibernate.validator.constraints;
+                                                exports org.hibernate.validator.constraints.br;
+                                                exports org.hibernate.validator.constraints.pl;
+                                                exports org.hibernate.validator.constraints.time;
+                                                exports org.hibernate.validator.constraintvalidation;
+                                                exports org.hibernate.validator.constraintvalidators;
+                                                exports org.hibernate.validator.engine;
+                                                exports org.hibernate.validator.group;
+                                                exports org.hibernate.validator.messageinterpolation;
+                                                exports org.hibernate.validator.parameternameprovider;
+                                                exports org.hibernate.validator.path;
+                                                exports org.hibernate.validator.resourceloading;
+                                                exports org.hibernate.validator.spi.cfg;
+                                                exports org.hibernate.validator.spi.group;
+                                                exports org.hibernate.validator.spi.resourceloading;
+                                                exports org.hibernate.validator.spi.scripting;
+                                                exports org.hibernate.validator.internal.util.logging to org.jboss.logging;
+
+                                                requires com.fasterxml.classmate;
+                                                requires java.desktop;
+                                                requires static ava.persistence;
+                                                requires java.scripting;
+                                                requires transitive java.validation;
+                                                requires java.xml;
+                                                requires java.xml.bind;
+                                                requires javafx.base;
+                                                requires javax.el;
+                                                requires static jboss.logging.annotations;
+                                                requires static joda.time;
+                                                requires static jsoup;
+                                                requires static money.api;
+                                                requires org.jboss.logging;
+                                                requires static paranamer;
+
+                                                uses javax.validation.ConstraintValidator;
+                                                uses javax.validation.valueextraction.ValueExtractor;
+
+                                                provides javax.validation.spi.ValidationProvider with org.hibernate.validator.HibernateValidator;
+                                            }
+                                        </moduleInfoSource>
+<!--                                         <moduleInfo> -->
+<!--                                             <name>org.hibernate.validator</name> -->
+<!--                                             <requires> -->
+<!--                                                 static jboss.logging.annotations; -->
+<!--                                                 transitive java.validation; -->
+<!--                                                 *; -->
+<!--                                             </requires> -->
+<!--                                             <exports> -->
+<!--                                                 org.hibernate.validator.internal.util.logging to org.jboss.logging; -->
+<!--                                                 !org.hibernate.validator.internal*; -->
+<!--                                                 *; -->
+<!--                                             </exports> -->
+<!--                                             <uses> -->
+<!--                                                 javax.validation.ConstraintValidator; -->
+<!--                                                 javax.validation.valueextraction.ValueExtractor; -->
+<!--                                             </uses> -->
+<!--                                         </moduleInfo> -->
+                                    </module>
+                                </configuration>
+                                <goals>
+                                    <goal>add-module-info</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>

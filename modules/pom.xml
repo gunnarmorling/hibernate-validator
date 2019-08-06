@@ -38,6 +38,7 @@
         <wildfly-secondary.patch-file>${project.build.directory}/wildfly-secondary-hv-patch.zip</wildfly-secondary.patch-file>
 
         <hibernate-validator-parent.path>..</hibernate-validator-parent.path>
+        <bv.api.version>2.0.2</bv.api.version>
     </properties>
 
     <dependencyManagement/>
@@ -52,6 +53,12 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-validator</artifactId>
             <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
@@ -215,13 +222,13 @@
                             <artifactItems>
                                 <!-- WildFly current -->
                                 <artifactItem>
-                                    <groupId>javax.validation</groupId>
-                                    <artifactId>validation-api</artifactId>
+                                    <groupId>jakarta.validation</groupId>
+                                    <artifactId>jakarta.validation-api</artifactId>
                                     <version>${bv.api.version}</version>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${wildfly-main.patched.target-dir}/modules/system/layers/base/javax/validation/api/main</outputDirectory>
                                     <!-- Specifying name to avoid timestamp in version on CI -->
-                                    <destFileName>validation-api-${bv.api.version}.jar</destFileName>
+                                    <destFileName>jakarta.validation-api-${bv.api.version}.jar</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
@@ -241,13 +248,13 @@
                                 </artifactItem>
                                 <!-- WildFly secondary version -->
                                 <artifactItem>
-                                    <groupId>javax.validation</groupId>
-                                    <artifactId>validation-api</artifactId>
+                                    <groupId>jakarta.validation</groupId>
+                                    <artifactId>jakarta.validation-api</artifactId>
                                     <version>${bv.api.version}</version>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${wildfly-secondary.patched.target-dir}/modules/system/layers/base/javax/validation/api/main</outputDirectory>
                                     <!-- Specifying name to avoid timestamp in version on CI -->
-                                    <destFileName>validation-api-${bv.api.version}.jar</destFileName>
+                                    <destFileName>jakarta.validation-api-${bv.api.version}.jar</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>

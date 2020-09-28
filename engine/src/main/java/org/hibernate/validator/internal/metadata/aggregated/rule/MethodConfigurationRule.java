@@ -7,6 +7,8 @@
 package org.hibernate.validator.internal.metadata.aggregated.rule;
 
 import java.lang.invoke.MethodHandles;
+import java.util.AbstractCollection;
+import java.util.Set;
 
 import org.hibernate.validator.internal.metadata.raw.ConstrainedExecutable;
 import org.hibernate.validator.internal.util.logging.Log;
@@ -74,6 +76,20 @@ public abstract class MethodConfigurationRule {
 		Class<?> clazz = executable.getCallable().getDeclaringClass();
 		Class<?> otherClazz = otherExecutable.getCallable().getDeclaringClass();
 
-		return !( clazz.isAssignableFrom( otherClazz ) || otherClazz.isAssignableFrom( clazz ) );
+		return methodUnderTest(clazz, otherClazz);
+	}
+
+	public boolean methodUnderTest(Class<?> clazz, Class<?> otherClazz) {
+		boolean x = !( clazz.isAssignableFrom( otherClazz ) || otherClazz.isAssignableFrom( clazz ));
+
+		boolean a1 = clazz.isAssignableFrom( otherClazz );
+		boolean a2 = otherClazz.isAssignableFrom( clazz );
+		boolean y = !( a1 || a2);
+
+		if (x != y) {
+			throw new IllegalStateException("Cannot happen");
+		}
+
+		return x;
 	}
 }
